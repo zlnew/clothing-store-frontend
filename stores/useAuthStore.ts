@@ -63,7 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
   const credentials = useCookie<Credentials>(
     'credentials', {
       default: () => ({ accessToken: undefined, user: undefined }),
-      httpOnly: process.env.NODE_ENV === 'production',
+      // httpOnly: process.env.NODE_ENV === 'production',
       watch: true
     }
   )
