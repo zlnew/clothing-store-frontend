@@ -4,15 +4,13 @@ const cart = useCartStore()
 const { slideover, hasChanged } = storeToRefs(cart)
 
 const { data: cartItems, execute: fetchCart } = await useAsyncData(
-  'cart_items',
-  () => cart.getItems(), {
+  'cartItems', () => cart.getItems(), {
     watch: [hasChanged]
   }
 )
 
 const { data: subtotal, execute: fetchSubtotal } = await useAsyncData(
-  'subtotal',
-  () => cart.getSubtotal(), {
+  'subtotal', () => cart.getSubtotal(), {
     watch: [cartItems]
   }
 )
@@ -25,7 +23,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col items-center">
     <UChip
       :text="cartItems?.length || 0"
       color="gray"
@@ -72,7 +70,7 @@ onMounted(async () => {
             </div>
 
             <div class="flex items-center justify-between">
-              <p class="text-2xl">Subtotal: <strong>${{ subtotal?.toFixed(2) }}</strong></p>
+              <p class="text-2xl">Subtotal: <strong>{{ Rp(subtotal) }}</strong></p>
               <UButton
                 trailing
                 to="/cart"

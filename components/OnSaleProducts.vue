@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { products } from '~/resources'
+const product = useProductStore()
 
 async function getProducts () {
-  return products.filter(item => {
-    return item.on_sale === true || typeof item.on_sale === 'number'
+  return await product.all({
+    on_sale: true
   })
 }
 
 const { data: productsData } = await useAsyncData(
-  'on_sale_products',
-  () => getProducts()
+  'onSaleProducts', () => product.all({on_sale: true})
 )
 </script>
 
@@ -17,7 +16,7 @@ const { data: productsData } = await useAsyncData(
   <UContainer>
     <div class="flex-col space-y-4">
       <h2 class="text-2xl lg:text-3xl text-center">
-        New year sale is on!
+        On sale now!
       </h2>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -30,4 +29,3 @@ const { data: productsData } = await useAsyncData(
     </div>
   </UContainer>
 </template>
-~/resources

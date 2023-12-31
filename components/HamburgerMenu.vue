@@ -1,23 +1,33 @@
 <script setup lang="ts">
 const router = useRouter()
+const { credentials } = storeToRefs(useAuthStore())
+
 const isOpen = ref(false)
 
 onMounted(() => {
-  router.beforeEach(() => {
-    isOpen.value = false
-  })
+  router.beforeEach(() => { isOpen.value = false })
 })
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col items-center">
     <UButton
-      icon="i-mdi-reorder-horizontal"
       color="black"
-      variant="outline"
+      variant="ghost"
       size="lg"
+      :padded="false"
       @click="isOpen = true"
-    />
+    >
+      <UChip :show="!!credentials.user">
+        <UAvatar
+          size="md"
+          :icon="credentials.user ? undefined : 'i-mdi-person'"
+          :alt="credentials.user ? credentials.user.name : 'Avatar'"
+          :ui="{ rounded: 'rounded-none' }"
+          class="border border-black"
+        />
+      </UChip>
+    </UButton>
 
     <USlideover v-model="isOpen">
       <div>
@@ -68,17 +78,19 @@ onMounted(() => {
 
         <div class="p-8 border-b border-black">
           <div class="space-y-4">
-            <p class="font-bold text-2xl">Hi, Maulana</p>
+            <p v-if="credentials.user" class="font-bold text-2xl">
+              Hi, {{ credentials.user.name }}
+            </p>
             <ul class="text-xl space-y-2">
-              <li>
+              <li v-if="credentials.user">
                 <NuxtLink exact-active-class="font-bold" to="/profile">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> My Profile
                   </div>
                 </NuxtLink>
               </li>
-              <li>
-                <NuxtLink exact-active-class="font-bold" to="/order">
+              <li v-if="credentials.user">
+                <NuxtLink exact-active-class="font-bold" to="/order/active">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> My Order
                   </div>
@@ -96,8 +108,8 @@ onMounted(() => {
         </div>
 
         <div class="p-8">
-          <!-- <SignIn /> -->
-          <SignOut />
+          <SignOut v-if="credentials.user" />
+          <SignIn v-else @modal-open="isOpen = false" />
         </div>
       </div>
     </USlideover>

@@ -1,13 +1,14 @@
 export interface Product {
   id: number
+  stock: number
   category: string
   name: string
   price: number
-  sizes: string[]
+  sizes: string[] | string
   image: string
   description: string
+  discount_percentage: number
   slug: string
-  discount: number | null
   created_at: string
   updated_at: string
 }
@@ -15,12 +16,14 @@ export interface Product {
 interface GetProductsParams {
   category?: string
   search?: string
+  new_release?: boolean
+  on_sale?: boolean
 }
 
 export const useProductStore = defineStore('product', () => {
   const config = useAppConfig()
 
-  async function all(params: GetProductsParams) {
+  async function all(params?: GetProductsParams) {
     const res: { data: Product[] } = await $fetch('/api/products', {
       baseURL: config.apiBaseUrl,
       params

@@ -1,4 +1,4 @@
-function slugify(str: string) {
+function slugify (str: string) {
   return str
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
@@ -7,7 +7,7 @@ function slugify(str: string) {
     .trim()
 }
 
-function isNewReleasedProduct(dateString: string) {
+function isNewReleasedProduct (dateString: string) {
   const inputDate = new Date(dateString);
   const currentDate = new Date();
   const timeDifference = currentDate.getTime() - inputDate.getTime();
@@ -15,7 +15,18 @@ function isNewReleasedProduct(dateString: string) {
   return monthsDifference < 30;
 }
 
+function Rp (number?: number | null) {
+  const formattedNumber = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(number || 0)
+
+  return formattedNumber
+}
+
 export {
   slugify,
-  isNewReleasedProduct
+  isNewReleasedProduct,
+  Rp,
 }

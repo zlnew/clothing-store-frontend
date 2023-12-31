@@ -1,7 +1,16 @@
+<script setup lang="ts">
+const { active } = useVoucherStore()
+
+const { data: voucher } = useAsyncData(
+  'active_voucher',
+  () => active()
+)
+</script>
+
 <template>
-  <div class="p-2 text-center bg-black text-white">
+  <div v-if="voucher" class="p-2 text-center bg-black text-white">
     <UContainer>
-      New year sale is on! 24% off sitewide using ZEE24 at checkout
+      {{ voucher.name }} is on! {{ voucher.discount_percentage }}% off sitewide using {{ voucher.code.toUpperCase() }} at checkout
     </UContainer>
   </div>
 </template>

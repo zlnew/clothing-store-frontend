@@ -6,10 +6,10 @@ const props = defineProps<{
 const config = useAppConfig()
 
 const finalPrice = computed(() => {
-  const discount = props.product.discount || 0
+  const discount_percentage = props.product.discount_percentage
   const price = props.product.price
-  const discountedPrice = (discount / 100) * price
-  return price - discountedPrice
+  const discountedAmount = (discount_percentage / 100) * price
+  return price - discountedAmount
 })
 
 const isNewRelease = computed(() => isNewReleasedProduct(props.product.created_at))
@@ -21,7 +21,7 @@ const isNewRelease = computed(() => isNewReleasedProduct(props.product.created_a
     tag="div"
     class="relative transition-transform hover:scale-105"
   >
-    <div class="space-y-4">
+    <div class="space-y-4" :class="{ 'opacity-50': product.stock < 1 }">
       <img
         :src="`${config.storageApiBaseUrl + product.image}`"
         :alt="product.name"
@@ -31,19 +31,22 @@ const isNewRelease = computed(() => isNewReleasedProduct(props.product.created_a
       <div>
         <h3 class="text-base md:text-lg line-clamp-2">{{ product.name }}</h3>
         <div class="flex gap-2">
-          <s v-if="product.discount">${{ product.price.toFixed(2) }}</s>
-          <p>${{ finalPrice.toFixed(2) }}</p>
+          <s v-if="product.discount_percentage > 0">{{ Rp(product.price) }}</s>
+          <p>{{ Rp(finalPrice) }}</p>
         </div>
       </div>
     </div>
 
     <div class="absolute left-0 top-0">
       <div class="flex flex-wrap gap-1 text-xs md:text-base">
+        <div v-if="product.stock < 1" class="py-1 px-3 border border-black bg-white shadow-lg">
+          Out of stock
+        </div>
         <div v-if="isNewRelease" class="py-1 px-3 border border-black bg-teal-200 shadow-lg">
           New
         </div>
-        <div v-if="product.discount" class="py-1 px-3 border border-black bg-yellow-300 shadow-lg">
-          -{{ product.discount }}%
+        <div v-if="product.discount_percentage > 0" class="py-1 px-3 border border-black bg-yellow-300 shadow-lg">
+          -{{ product.discount_percentage }}%
         </div>
       </div>
     </div>

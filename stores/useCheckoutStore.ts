@@ -1,56 +1,37 @@
-import { promoCodes } from '~/resources'
+import type { CartItemWithProduct } from './useCartStore'
 
 interface Transaction {
-  user_id: number
-  items: any
-  checkout_details: {
-    subtotal: number
-    total: number
-    discount: number
-    promo_code: string
-    note: string
-  }
+  promo_code: string
+  note: string
+  items: CartItemWithProduct[]
 }
 
-interface ApplyPromoCode {
-  code: string
-  subtotal: number
+interface CreateTransactionResponse {
+  snap_token: string
+  snap_url: string
 }
 
 export const useCheckoutStore = defineStore('checkout', () => {
-  const cart = useCartStore()
-  const promoCode = ref()
+  const config = useAppConfig()
+  const auth = useAuthStore()
 
-  function applyPromoCode ({ code, subtotal }: ApplyPromoCode) {
-    const matchedPromo = promoCodes.find(item => {
-      return item.code.toLowerCase() === code.toLowerCase()
+  async function create (transaction: Transaction) {
+    const { accessToken } = await auth.getCredentials()
+
+    const res: CreateTransactionResponse = await $fetch('/api/transactions', {
+      baseURL: config.apiBaseUrl,
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: transaction
     })
 
-    if (matchedPromo && subtotal > 0) {
-      return {
-        success: true,
-        amount: (matchedPromo.percentage / 100) * subtotal,
-        percentage: matchedPromo.percentage
-      }
-    }
-  }
-
-  function checkout (transaction: Transaction) {
-    console.log(transaction)
-  }
-
-  async function getDiscount () {
-    const subtotal = await cart.getSubtotal()
-    return applyPromoCode({
-      code: promoCode.value,
-      subtotal: subtotal
-    })
+    return res
   }
 
   return {
-    promoCode,
-    applyPromoCode,
-    checkout,
-    getDiscount
+    create
   }
 })

@@ -3,11 +3,12 @@ import SignUpModal from './SignUpModal.vue'
 import { object, string, type InferType } from 'yup'
 import type { FormSubmitEvent } from '#ui/types'
 
-defineProps<{
+const props = defineProps<{
   refUrl?: string
 }>()
 
 const modal = useModalStore()
+const auth = useAuthStore()
 
 const schema = object({
   email: string().email('Invalid email').required('Required'),
@@ -21,8 +22,28 @@ const state = reactive({
   password: undefined
 })
 
+interface ValidationErrorResponse {
+  message: string
+  errors: Record<string, string[]>
+}
+
+const validationError = ref<ValidationErrorResponse>()
+
 async function onSubmit (event: FormSubmitEvent<Schema>) {
-  console.log(event.data)
+  try {
+    const data = await auth.signIn(event.data)
+
+    await auth.setCredentials({
+      accessToken: data.access_token,
+      user: data.user
+    })
+
+    window.location.href = props.refUrl || window.location.href
+  } catch (err: any) {
+    if (err.response && err.response.status === 422) {
+      validationError.value = err.data
+    }
+  }
 }
 
 function openSignUpModal () {
@@ -37,7 +58,17 @@ function openSignUpModal () {
 </script>
 
 <template>
-  <div>
+  <div class="space-y-4">
+    <UNotification
+      v-if="validationError"
+      id="signin-error"
+      icon="i-mdi-alert-circle"
+      color="red"
+      :title="validationError.message"
+      :timeout="0"
+      @close="validationError = undefined"
+    />
+
     <UForm :schema="schema" :state="state" @submit="onSubmit">
       <div class="space-y-2">
         <UFormGroup label="Email" name="email">

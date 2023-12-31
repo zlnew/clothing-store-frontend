@@ -1,15 +1,8 @@
 <script setup lang="ts">
-import { products } from '~/resources'
-
-async function getProducts () {
-  return products.filter(item => {
-    return item.new_release === true
-  })
-}
+const product = useProductStore()
 
 const { data: productsData } = await useAsyncData(
-  'new_release_products',
-  () => getProducts()
+  'newReleasedProducts', () => product.all({new_release: true})
 )
 </script>
 
@@ -41,4 +34,3 @@ const { data: productsData } = await useAsyncData(
     </div>
   </UContainer>
 </template>
-~/resources

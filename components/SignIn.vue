@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import SignInModal from './modals/SignInModal.vue'
 
+const emit = defineEmits(['modalOpen'])
+
 const { open } = useModalStore()
 
 function openSignInModal () {
+  emit('modalOpen')
   open({
     title: 'Sign In to Zee Apparel',
     component: SignInModal,

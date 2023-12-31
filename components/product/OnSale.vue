@@ -1,40 +1,49 @@
 <script setup lang="ts">
-import type { Product } from '~/resources'
-
-defineProps<{
+const props = defineProps<{
   product: Product
 }>()
+
+const config = useAppConfig()
+
+const finalPrice = computed(() => {
+  const discount_percentage = props.product.discount_percentage
+  const price = props.product.price
+  const discountedAmount = (discount_percentage / 100) * price
+  return price - discountedAmount
+})
+
+const isNewRelease = computed(() => isNewReleasedProduct(props.product.created_at))
 </script>
 
 <template>
   <NuxtLink
-    :to="`/product/${product.category.toLowerCase()}/${product.slug}`"
+    :to="`/product/${product.category}/${product.slug}`"
     tag="div"
     class="relative transition-transform bg-gradient-to-b from-transparent via-transparent to-yellow-100 hover:scale-105"
   >
     <div class="p-4 space-y-4">
       <img
-        :src="product.image"
+        :src="`${config.storageApiBaseUrl + product.image}`"
         :alt="product.name"
         width="1000"
         height="1000"
       >
       <div>
         <h3 class="text-base md:text-lg line-clamp-2">{{ product.name }}</h3>
-        <p>${{ product.price.toFixed(2) }}</p>
+        <div class="flex gap-2">
+          <s v-if="product.discount_percentage > 0">{{ Rp(product.price) }}</s>
+          <p>{{ Rp(finalPrice) }}</p>
+        </div>
       </div>
     </div>
 
     <div class="absolute left-0 top-0">
       <div class="flex flex-wrap gap-1 text-xs md:text-base">
-        <div v-if="product.best_seller" class="py-1 px-3 border border-black bg-black text-yellow-300 shadow-lg">
-          Best Seller
-        </div>
-        <div v-if="product.new_release" class="py-1 px-3 border border-black bg-teal-200 shadow-lg">
+        <div v-if="isNewRelease" class="py-1 px-3 border border-black bg-teal-200 shadow-lg">
           New
         </div>
-        <div v-if="product.on_sale" class="py-1 px-3 border border-black bg-yellow-300 shadow-lg">
-          -{{ product.on_sale }}%
+        <div v-if="product.discount_percentage > 0" class="py-1 px-3 border border-black bg-yellow-300 shadow-lg">
+          -{{ product.discount_percentage }}%
         </div>
       </div>
     </div>

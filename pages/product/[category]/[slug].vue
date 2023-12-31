@@ -30,13 +30,21 @@ async function getProduct () {
 }
 
 const { data: productData } = await useAsyncData(
-  'product',
-  () => getProduct()
+  'product', () => getProduct()
 )
+
+const finalPrice = computed(() => {
+  const discount_percentage = productData.value?.discount_percentage || 0
+  const price = productData.value?.price || 0
+  const discountedAmount = (discount_percentage / 100) * price
+  return price - discountedAmount
+})
+
+const isNewRelease = computed(() => isNewReleasedProduct(productData.value?.created_at || ''))
 
 useSeoMeta({
   title: () => {
-    return productData.value?.name || ''
+    return productData.value?.name || 'Product not found'
   }
 })
 
@@ -44,11 +52,23 @@ function addToCart () {
   if (productData.value) {
     const item = {
       id: productData.value.id,
+      name: productData.value.name,
       quantity: quantity.value,
+      price: finalPrice.value,
       size: selectedSize.value
     }
     cart.add(item)
     slideover.value = true
+  }
+}
+
+function handleQuantity (value: number) {
+  const stock = productData.value?.stock
+
+  if (stock && value <= stock) {
+    quantity.value = value
+  } else {
+    quantity.value = 1
   }
 }
 </script>
@@ -84,19 +104,34 @@ function addToCart () {
             >
           </div>
     
-          <div class="space-y-4">
+          <div class="space-y-6">
             <div class="space-y-2">
               <h2 class="text-3xl">{{ productData.name }}</h2>
-              <p class="text-2xl">
-                ${{ productData.price.toFixed(2) }}
-              </p>
+              <div class="flex gap-2 text-sm">
+                <div class="py-1 px-3 border border-black bg-white">
+                  {{ (productData.stock > 0) ? `${productData.stock} left` : 'Out of stock' }}
+                </div>
+                <div v-if="isNewRelease" class="py-1 px-3 border border-black bg-teal-200">
+                  New
+                </div>
+                <div v-if="productData.discount_percentage > 0" class="py-1 px-3 border border-black bg-yellow-300">
+                  -{{ productData.discount_percentage }}%
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex gap-2 text-2xl">
+              <s v-if="productData.discount_percentage > 0">{{ Rp(productData.price) }}</s>
+              <p>{{ Rp(finalPrice) }}</p>
             </div>
     
             <URadioGroup
+              v-if="typeof productData.sizes === 'object'"
               v-model="selectedSize"
               color="yellow"
               legend="Choose size"
               :options="productData.sizes"
+              :disabled="productData.stock < 1"
             >
               <template #label="{ option }">
                 <p class="text-base">
@@ -110,9 +145,13 @@ function addToCart () {
                 <UFormGroup label="Quantity">
                   <UInput
                     type="number"
-                    v-model="quantity"
                     size="xl"
+                    :model-value="quantity"
+                    :min="1"
+                    :max="productData.stock"
+                    :disabled="productData.stock < 1"
                     :ui="{ rounded: 'rounded-none'}"
+                    @update:model-value="handleQuantity"
                   />
                 </UFormGroup>
               </div>
@@ -122,7 +161,7 @@ function addToCart () {
                   label="ADD TO CART"
                   color="black"
                   size="xl"
-                  :disabled="selectedSize === undefined || quantity < 1"
+                  :disabled="(selectedSize === undefined || quantity < 1) || productData.stock < 1"
                   @click="addToCart"
                 />
               </div>

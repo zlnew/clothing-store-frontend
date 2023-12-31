@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const auth = useAuthStore()
+</script>
+
 <template>
   <div>
     <UButton
@@ -6,6 +10,7 @@
       color="black"
       size="lg"
       class="uppercase"
+      @click="auth.signOut"
     />
   </div>
 </template>

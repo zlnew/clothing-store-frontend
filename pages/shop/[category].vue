@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { capitalize } from 'vue'
-// import { products } from '~/resources'
 
 const route = useRoute()
 const product = useProductStore()
@@ -38,8 +37,7 @@ async function getProducts () {
 }
 
 const { data: productsData } = await useAsyncData(
-  'products',
-  () => getProducts(), {
+  'products', () => getProducts(), {
     watch: [route, search]
   }
 )
