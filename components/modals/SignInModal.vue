@@ -28,9 +28,12 @@ interface ValidationErrorResponse {
 }
 
 const validationError = ref<ValidationErrorResponse>()
+const loading = ref(false)
 
 async function onSubmit (event: FormSubmitEvent<Schema>) {
   try {
+    loading.value = true
+
     const data = await auth.signIn(event.data)
 
     await auth.setCredentials({
@@ -43,6 +46,8 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     if (err.response && err.response.status === 422) {
       validationError.value = err.data
     }
+  } finally {
+    loading.value = false
   }
 }
 
@@ -108,6 +113,7 @@ function openSignUpModal () {
           label="Sign In"
           color="black"
           size="xl"
+          :loading="loading"
         />
       </div>
     </UForm>

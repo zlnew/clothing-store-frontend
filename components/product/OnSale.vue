@@ -28,9 +28,9 @@ const isNewRelease = computed(() => isNewReleasedProduct(props.product.created_a
         width="1000"
         height="1000"
       >
-      <div>
+      <div class="space-y-2">
         <h3 class="text-base md:text-lg line-clamp-2">{{ product.name }}</h3>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap md:flex-nowrap gap-1 md:gap-2">
           <s v-if="product.discount_percentage > 0">{{ Rp(product.price) }}</s>
           <p>{{ Rp(finalPrice) }}</p>
         </div>
