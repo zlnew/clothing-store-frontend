@@ -6,11 +6,11 @@ useSeoMeta({
 
 <template>
   <div>
+    <NuxtLoadingIndicator color="yellow" :height="1" :throttle="0" />
     <NuxtLayout>
       <NuxtPage />
       <ModalLayout />
     </NuxtLayout>
-  
     <UNotifications />
   </div>
 </template>
