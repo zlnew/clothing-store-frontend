@@ -1,10 +1,7 @@
-export default defineNuxtRouteMiddleware(async () => {
-  const { credentials } = useAuthStore()
+export default defineNuxtRouteMiddleware (async () => {
+  const user = useUser()
 
-  if (!credentials.accessToken && !credentials.user) {
-    abortNavigation({
-      message: 'Not Found',
-      statusCode: 404
-    })
+  if (process.client && !user.value) {
+    return window.location.href = '/'
   }
 })

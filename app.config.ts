@@ -1,5 +1,8 @@
 export default defineAppConfig({
   ui: {
+    breadcrumb: {
+      active: 'text-black'
+    },
     chip: {
       base: 'ring-black text-black',
       background: 'bg-yellow-300'
@@ -46,6 +49,11 @@ export default defineAppConfig({
           outline: 'shadow-sm bg-white text-gray-900 ring-1 ring-inset ring-black focus:ring-2 focus:ring-black'
         }
       }
+    },
+    checkbox: {
+      rounded: 'rounded-none',
+      color: 'text-black',
+      ring: 'focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white'
     },
     notification: {
       rounded: 'rounded-none',

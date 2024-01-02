@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { capitalize } from 'vue'
+import debounce from 'lodash.debounce'
 
 const route = useRoute()
-const product = useProductStore()
+const { get } = useProduct()
 
 definePageMeta({
   validate: async (route) => {
@@ -22,25 +23,35 @@ useSeoMeta({
 })
 
 const search = ref('')
+const searching = ref(false)
 
-async function getProducts () {
+const { data: products, refresh } = await useAsyncData(
+  'products', () => handleGetProducts(), {
+    watch: [route]
+  }
+)
+
+async function handleGetProducts () {
   const categoryParam = (route.params.category && typeof route.params.category === 'string')
     ? route.params.category
     : 'all'
+  const searchQuery = search.value
 
-  const params = {
+  return get({
     category: categoryParam,
-    search: search.value
-  }
-
-  return await product.all(params)
+    search: searchQuery
+  })
 }
 
-const { data: productsData } = await useAsyncData(
-  'products', () => getProducts(), {
-    watch: [route, search]
-  }
-)
+const debounceSearch = debounce(async () =>{
+  await refresh()
+  searching.value = false
+}, 500)
+
+async function handleSearch () {
+  searching.value = true
+  await debounceSearch()
+}
 </script>
 
 <template>
@@ -58,18 +69,19 @@ const { data: productsData } = await useAsyncData(
           v-model="search"
           placeholder="Search product"
           class="py-4 w-full text-lg md:text-2xl border-b border-black focus:outline-none"
+          @input="handleSearch"
         >
-    
-        <div v-if="productsData?.length" class="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <ProductList
-            v-for="product in productsData"
-            :key="product.id"
-            :product="product"
-          />
-        </div>
-    
-        <div v-else class="h-96 flex items-center justify-center">
-          No products found
+        <div class="min-h-96" :class="{ 'flex items-center justify-center': searching || !products?.length }">
+          <p v-if="searching">Searching product ...</p>
+          <div v-else :class="{ 'grid grid-cols-2 md:grid-cols-4 gap-8': products?.length }">
+            <p v-if="!products?.length">No products found</p>        
+            <ProductList
+              v-else
+              v-for="product in products"
+              :key="product.id"
+              :product="product"
+            />
+          </div>
         </div>
       </div>
     </UContainer>

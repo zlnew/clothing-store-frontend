@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const auth = useAuthStore()
+const { logout } = useAuth()
+
+function handleLogout () {
+  logout().then(() => window.location.reload())
+}
 </script>
 
 <template>
@@ -10,7 +14,7 @@ const auth = useAuthStore()
       color="black"
       size="lg"
       class="uppercase"
-      @click="auth.signOut"
+      @click="handleLogout"
     />
   </div>
 </template>

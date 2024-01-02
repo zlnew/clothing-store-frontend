@@ -3,16 +3,14 @@ import SignInModal from './modals/SignInModal.vue'
 
 const emit = defineEmits(['modalOpen'])
 
-const { open } = useModalStore()
+const { open } = useModal()
 
 function openSignInModal () {
   emit('modalOpen')
   open({
     title: 'Sign In to Zee Apparel',
     component: SignInModal,
-    componentProps: {
-      refUrl: window.location.href
-    }
+    componentProps: { refUrl: window.location.href }
   })
 }
 </script>

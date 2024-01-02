@@ -3,7 +3,7 @@ const props = defineProps<{
   product: Product
 }>()
 
-const config = useAppConfig()
+const { storageBaseUrl } = useRuntimeConfig().public
 
 const finalPrice = computed(() => {
   const discount_percentage = props.product.discount_percentage
@@ -23,7 +23,7 @@ const isNewRelease = computed(() => isNewReleasedProduct(props.product.created_a
   >
     <div class="space-y-4" :class="{ 'opacity-50': product.stock < 1 }">
       <img
-        :src="`${config.storageApiBaseUrl + product.image}`"
+        :src="`${storageBaseUrl + product.image}`"
         :alt="product.name"
         width="1000"
         height="1000"

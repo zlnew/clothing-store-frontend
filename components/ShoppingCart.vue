@@ -1,49 +1,66 @@
 <script setup lang="ts">
+import SignInModal from './modals/SignInModal.vue'
+
 const router = useRouter()
-const cart = useCartStore()
-const { slideover, hasChanged } = storeToRefs(cart)
+const modal = useModal()
+const { user } = useAuth()
+const { items, subtotal, slideover } = useShoppingCart()
 
-const { data: cartItems, execute: fetchCart } = await useAsyncData(
-  'cartItems', () => cart.getItems(), {
-    watch: [hasChanged]
+function handleSlideover () {
+  if (!user.value) {
+    modal.open({
+      title: 'Sign In to Zee Apparel',
+      component: SignInModal,
+      componentProps: {
+        refUrl: window.location.href
+      }
+    })
+  } else {
+    slideover.value = true
   }
-)
+}
 
-const { data: subtotal, execute: fetchSubtotal } = await useAsyncData(
-  'subtotal', () => cart.getSubtotal(), {
-    watch: [cartItems]
-  }
-)
-
-onMounted(async () => {  
-  router.beforeEach(() => { slideover.value = false })
-  await fetchCart()
-  await fetchSubtotal()
-})
+onMounted(() => router.beforeEach(() => { slideover.value = false }))
 </script>
 
 <template>
   <div class="flex flex-col items-center">
-    <UChip
-      :text="cartItems?.length || 0"
-      color="gray"
-      size="3xl"
-      :ui="{
-        base: 'ring-black text-black',
-        background: 'bg-yellow-300'
-      }"
-    >
-      <UButton
-        icon="i-mdi-cart-outline"
-        :color="$route.path === '/cart' ? 'yellow' : 'black'"
-        :variant="$route.path === '/cart' ? 'solid' : 'outline'"
-        size="lg"
-        @click="slideover = true"
-      />
-    </UChip>
+    <ClientOnly>
+      <UChip
+        :text="items?.length || 0"
+        color="gray"
+        size="3xl"
+        :ui="{ base: 'ring-black text-black', background: 'bg-yellow-300' }"
+      >
+        <UButton
+          icon="i-mdi-cart-outline"
+          color="black"
+          variant="outline"
+          size="lg"
+          @click="handleSlideover"
+        />
+      </UChip>
+
+      <template #fallback>
+        <UChip
+          text="0"
+          color="gray"
+          size="3xl"
+          :ui="{ base: 'ring-black text-black', background: 'bg-yellow-300' }"
+        >
+          <UButton
+            icon="i-mdi-cart-outline"
+            color="black"
+            variant="outline"
+            size="lg"
+            @click="handleSlideover"
+          />
+        </UChip>
+      </template>
+    </ClientOnly>
 
     <USlideover v-model="slideover">
-      <div>
+      <div class="h-full flex flex-col justify-between">
         <div class="p-8 border-b border-black flex items-center justify-between">
           <p class="text-2xl font-semibold">Shopping Cart</p>
           <UButton
@@ -54,33 +71,30 @@ onMounted(async () => {
           />
         </div>
 
-        <div class="p-8">
-          <div class="space-y-8">
-            <p v-if="cartItems && cartItems.length < 1" class="text-lg text-center">
-              Cart is empty. <NuxtLink to="/shop/all" class="font-bold">Go shopping</NuxtLink>
-            </p>
+        <div class="p-8 h-full flex flex-col justify-start gap-4">
+          <p v-if="!items?.length" class="text-lg text-center">
+            Cart is empty. <NuxtLink to="/shop/all" class="font-bold">Go shopping</NuxtLink>
+          </p>
 
-            <div v-else class="flex flex-col gap-8">
-              <CartSlideoverItem
-                v-for="item in cartItems"
-                :key="item.id"
-                :item="item"
-              />
-              <hr class="border-black">
-            </div>
-
-            <div class="flex items-center justify-between">
-              <p class="text-2xl">Subtotal: <strong>{{ Rp(subtotal) }}</strong></p>
-              <UButton
-                trailing
-                to="/cart"
-                icon="i-mdi-arrow-right"
-                label="View Cart"
-                color="yellow"
-                size="xl"
-              />
-            </div>
+          <div v-else class="flex flex-col gap-8">
+            <CartItem
+              v-for="item in items"
+              :key="item.id"
+              :item="item"
+            />
           </div>
+        </div>
+
+        <div class="p-8 border-t border-black flex items-center justify-between gap-4">
+          <p class="text-2xl">Subtotal: <strong>{{ Rp(subtotal) }}</strong></p>
+          <UButton
+            trailing
+            to="/shopping-cart"
+            icon="i-mdi-arrow-right"
+            label="View Cart"
+            color="yellow"
+            size="xl"
+          />
         </div>
       </div>
     </USlideover>

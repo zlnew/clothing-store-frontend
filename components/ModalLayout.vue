@@ -1,10 +1,9 @@
 <script setup lang="ts">
-const { state } = useModalStore()
-const { modelValue } = storeToRefs(useModalStore())
+const { instance, state } = useModal()
 </script>
 
 <template>
-  <UModal v-model="modelValue" :ui="{ rounded: 'rounded-none' }">
+  <UModal v-model="instance" :ui="{ rounded: 'rounded-none' }">
     <UCard
       :ui="{
         ring: '',
@@ -21,7 +20,7 @@ const { modelValue } = storeToRefs(useModalStore())
             color="black"
             variant="outline"
             icon="i-mdi-close"
-            @click="modelValue = false"
+            @click="instance = false"
           />
         </div>
       </template>

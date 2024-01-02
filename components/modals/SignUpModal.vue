@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import SignInModal from './SignInModal.vue'
 import { object, string, ref as yupRef, type InferType } from 'yup'
-import type { FormSubmitEvent } from '#ui/types'
 
 const props = defineProps<{
   refUrl?: string
 }>()
 
-const modal = useModalStore()
-const auth = useAuthStore()
+const modal = useModal()
+const { register } = useAuth()
 
 const schema = object({
   name: string().max(50).required('Required'),
@@ -20,41 +19,20 @@ const schema = object({
 
 type Schema = InferType<typeof schema>
 
-const state = reactive({
-  name: undefined,
-  email: undefined,
-  password: undefined,
-  password_confirmation: undefined
+const state = reactive<Schema>({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: ''
 })
 
-interface ValidationErrorResponse {
-  message: string
-  errors: Record<string, string[]>
-}
-
-const validationError = ref<ValidationErrorResponse>()
-const loading = ref(false)
-
-async function onSubmit (event: FormSubmitEvent<Schema>) {
-  try {
-    loading.value = true
-
-    const data = await auth.signUp(event.data)
-
-    await auth.setCredentials({
-      accessToken: data.access_token,
-      user: data.user
-    })
-
-    window.location.href = props.refUrl || window.location.href
-  } catch (err: any) {
-    if (err.response && err.response.status === 422) {
-      validationError.value = err.data
+const { submit, processing, validationMessage } = useSubmit(
+  () => register(state), {
+    onSuccess: () => {
+      window.location.href = props.refUrl || window.location.href
     }
-  } finally {
-    loading.value = false
   }
-}
+)
 
 function openSignInModal () {
   modal.open({
@@ -69,17 +47,12 @@ function openSignInModal () {
 
 <template>
   <div class="space-y-4">
-    <UNotification
-      v-if="validationError"
-      id="signup-error"
-      icon="i-mdi-alert-circle"
-      color="red"
-      :title="validationError.message"
-      :timeout="0"
-      @close="validationError = undefined"
+    <ErrorNotification
+      :message="validationMessage"
+      @close="validationMessage = null"
     />
 
-    <UForm :schema="schema" :state="state" @submit="onSubmit">
+    <UForm :schema="schema" :state="state" @submit="submit">
       <div class="space-y-2">
         <UFormGroup label="Full Name" name="name">
           <UInput
@@ -88,6 +61,7 @@ function openSignInModal () {
             size="xl"
           />
         </UFormGroup>
+
         <UFormGroup label="Email" name="email">
           <UInput
             v-model="state.email"
@@ -95,6 +69,7 @@ function openSignInModal () {
             size="xl"
           />
         </UFormGroup>
+
         <UFormGroup label="Password" name="password">
           <UInput
             type="password"
@@ -103,6 +78,7 @@ function openSignInModal () {
             size="xl"
           />
         </UFormGroup>
+
         <UFormGroup label="Confirm Password" name="password_confirmation">
           <UInput
             type="password"
@@ -111,29 +87,22 @@ function openSignInModal () {
             size="xl"
           />
         </UFormGroup>
-        <UButton
-          label="Already have an account? Sign In"
-          color="black"
-          variant="link"
-          size="xl"
-          :padded="false"
-          @click="openSignInModal"
-        />
       </div>
 
-      <div class="mt-6 flex items-center justify-end gap-2">
+      <div class="mt-6 flex items-center justify-between gap-2">
         <UButton
-          icon="i-mdi-google"
-          label="Sign Up with Google"
-          color="white"
+          icon="i-mdi-arrow-left"
+          label="Login"
+          color="black"
           size="xl"
+          @click="openSignInModal"
         />
         <UButton
           type="submit"
-          label="Sign Up"
-          color="black"
+          label="Register"
+          color="yellow"
           size="xl"
-          :leading="loading"
+          :loading="processing"
         />
       </div>
     </UForm>

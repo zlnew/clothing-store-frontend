@@ -1,14 +1,14 @@
 <script setup lang="ts">
-const { active } = useVoucherStore()
+const { getActive } = usePromo()
 
-const { data: voucher } = useAsyncData(
-  'activeVoucher', () => active()
+const { data: promo } = useAsyncData(
+  'activePromo', () => getActive()
 )
 </script>
 
 <template>
   <UContainer
-    v-if="voucher"
+    v-if="promo"
     :ui="{
       padding: 'px-0 sm:px-0 lg:px-0',
       constrained: 'max-w-full'
@@ -16,13 +16,13 @@ const { data: voucher } = useAsyncData(
   >
     <div class="h-96 md:h-[28rem] flex flex-col justify-center items-center tracking-wide bg-gradient-to-b from-white via-yellow-300 to-white">
       <span class="text-lg md:text-xl uppercase">
-        {{ voucher.name }} IS ON!
+        {{ promo.name }} IS ON!
       </span>
       <span class="text-7xl md:text-9xl font-light tracking-widest">
-        {{ voucher.discount_percentage }}% OFF
+        {{ promo.discount_percentage }}% OFF
       </span>
       <span class="md:text-lg">
-        {{ voucher.discount_percentage }}% off sitewide using {{ voucher.code }} at checkout
+        {{ promo.discount_percentage }}% off sitewide using {{ promo.code.toUpperCase() }} at checkout
       </span>
     </div>
   </UContainer>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const router = useRouter()
-const { credentials } = storeToRefs(useAuthStore())
+const { user } = useAuth()
 
 const isOpen = ref(false)
 
@@ -18,15 +18,27 @@ onMounted(() => {
       :padded="false"
       @click="isOpen = true"
     >
-      <UChip :show="!!credentials.user">
-        <UAvatar
-          size="md"
-          :icon="credentials.user ? undefined : 'i-mdi-person'"
-          :alt="credentials.user ? credentials.user.name : 'Avatar'"
-          :ui="{ rounded: 'rounded-none' }"
-          class="border border-black"
-        />
-      </UChip>
+      <ClientOnly>
+        <UChip :show="!!user">
+          <UAvatar
+            size="md"
+            :icon="user ? undefined : 'i-mdi-person'"
+            :alt="user ? user.name : 'Avatar'"
+            :ui="{ rounded: 'rounded-none' }"
+            class="border border-black"
+          />
+        </UChip>
+
+        <template #fallback>
+          <UAvatar
+            size="md"
+            icon="i-mdi-person"
+            alt="Avatar"
+            :ui="{ rounded: 'rounded-none' }"
+            class="border border-black"
+          />
+        </template>
+      </ClientOnly>
     </UButton>
 
     <USlideover v-model="isOpen">
@@ -76,20 +88,20 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="p-8 border-b border-black">
+        <div v-if="user" class="p-8 border-b border-black">
           <div class="space-y-4">
-            <p v-if="credentials.user" class="font-bold text-2xl">
-              Hi, {{ credentials.user.name }}
+            <p class="font-bold text-2xl">
+              Hi, {{ user.name }}
             </p>
             <ul class="text-xl space-y-2">
-              <li v-if="credentials.user">
+              <li>
                 <NuxtLink exact-active-class="font-bold" to="/profile">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> My Profile
                   </div>
                 </NuxtLink>
               </li>
-              <li v-if="credentials.user">
+              <li>
                 <NuxtLink exact-active-class="font-bold" to="/order/active">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> My Order
@@ -97,7 +109,7 @@ onMounted(() => {
                 </NuxtLink>
               </li>
               <li>
-                <NuxtLink exact-active-class="font-bold" to="/cart">
+                <NuxtLink exact-active-class="font-bold" to="/shopping-cart">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> Shopping Cart
                   </div>
@@ -108,7 +120,7 @@ onMounted(() => {
         </div>
 
         <div class="p-8">
-          <SignOut v-if="credentials.user" />
+          <SignOut v-if="user" />
           <SignIn v-else @modal-open="isOpen = false" />
         </div>
       </div>

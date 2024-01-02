@@ -1,16 +1,15 @@
 <script setup lang="ts">
-const { active } = useVoucherStore()
+const { getActive } = usePromo()
 
-const { data: voucher } = useAsyncData(
-  'active_voucher',
-  () => active()
+const { data: promo } = useAsyncData(
+  'activePromo', () => getActive()
 )
 </script>
 
 <template>
-  <div v-if="voucher" class="p-2 text-center bg-black text-white">
+  <div v-if="promo" class="p-2 text-center bg-black text-white">
     <UContainer>
-      {{ voucher.name }} is on! {{ voucher.discount_percentage }}% off sitewide using {{ voucher.code.toUpperCase() }} at checkout
+      {{ promo.name }} is on! {{ promo.discount_percentage }}% off sitewide using {{ promo.code.toUpperCase() }} at checkout
     </UContainer>
   </div>
 </template>

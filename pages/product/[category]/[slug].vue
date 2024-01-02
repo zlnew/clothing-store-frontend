@@ -1,69 +1,57 @@
 <script setup lang="ts">
 import { capitalize } from 'vue'
 
-const config = useAppConfig()
-const route = useRoute()
-const cart = useCartStore()
-const product = useProductStore()
-const { slideover } = storeToRefs(cart)
-
-const selectedSize = ref()
-const quantity = ref(1)
-
-const accordionItems = [{
+const accordionItems = [
+  {
     defaultOpen: true,
     slot: 'product-info',
     label: 'Product Info'
-  }, {
+  },
+  {
     label: 'Return & Refund Policy',
-    content: "I’m a Return and Refund policy. I’m a great place to let your customers know what to do in case they are dissatisfied with their purchase. Having a straightforward refund or exchange policy is a great way to build trust and reassure your customers that they can buy with confidence."
-  }, {
+    content: "I'm a Return and Refund policy. I'm a great place to let your customers know what to do in case they are dissatisfied with their purchase. Having a straightforward refund or exchange policy is a great way to build trust and reassure your customers that they can buy with confidence."
+  },
+  {
     label: 'Shipping Info',
     content: "I'm a shipping policy. I'm a great place to add more information about your shipping methods, packaging and cost. Providing straightforward information about your shipping policy is a great way to build trust and reassure your customers that they can buy from you with confidence."
-}]
+  }
+]
 
-async function getProduct () {
+const { storageBaseUrl } = useRuntimeConfig().public
+const route = useRoute()
+const cart = useShoppingCart()
+const { show } = useProduct()
+
+const selectedSize = ref<string>()
+const quantity = ref(1)
+
+async function handleGetProduct () {
   const slug = (route.params.slug && typeof route.params.slug === 'string')
     ? route.params.slug
     : ''
-  return await product.show(slug)
+  return await show(slug)
 }
 
-const { data: productData } = await useAsyncData(
-  'product', () => getProduct()
+async function handleAddToCart () {
+  if (product.value && selectedSize.value) {
+    await cart.store({
+      product_id: product.value.id,
+      quantity: quantity.value,
+      size: selectedSize.value
+    })
+  }
+}
+
+const { data: product } = useAsyncData(
+  'product', () => handleGetProduct()
 )
 
-const finalPrice = computed(() => {
-  const discount_percentage = productData.value?.discount_percentage || 0
-  const price = productData.value?.price || 0
-  const discountedAmount = (discount_percentage / 100) * price
-  return price - discountedAmount
-})
-
-const isNewRelease = computed(() => isNewReleasedProduct(productData.value?.created_at || ''))
-
-useSeoMeta({
-  title: () => {
-    return productData.value?.name || 'Product not found'
-  }
-})
-
-function addToCart () {
-  if (productData.value) {
-    const item = {
-      id: productData.value.id,
-      name: productData.value.name,
-      quantity: quantity.value,
-      price: finalPrice.value,
-      size: selectedSize.value
-    }
-    cart.add(item)
-    slideover.value = true
-  }
-}
+const { submit: addToCart } = useSubmit(
+  () => handleAddToCart()
+)
 
 function handleQuantity (value: number) {
-  const stock = productData.value?.stock
+  const stock = product.value?.stock
 
   if (stock && value <= stock) {
     quantity.value = value
@@ -71,34 +59,40 @@ function handleQuantity (value: number) {
     quantity.value = 1
   }
 }
+
+const finalPrice = computed(() => {
+  const discount_percentage = product.value?.discount_percentage || 0
+  const price = product.value?.price || 0
+  const discountedAmount = (discount_percentage / 100) * price
+  return price - discountedAmount
+})
+
+const isNewRelease = computed(() => isNewReleasedProduct(product.value?.created_at || ''))
+
+useSeoMeta({
+  title: () => product.value?.name || 'Product not found'
+})
 </script>
 
 <template>
-  <div class="mt-8 md:mt-14 mb-8">
-    <UContainer :ui="{ constrained: 'max-w-4xl' }">
-      <div v-if="productData" class="space-y-8">
+  <UContainer :ui="{ constrained: 'max-w-4xl' }">
+    <div class="mt-8 md:mt-14 mb-8">
+      <div v-if="product" class="space-y-8">
         <UBreadcrumb
           divider="/"
-          :links="[{
-              label: 'Home',
-              to: '/'
-            }, {
-              label: capitalize(productData.category),
-              to: `/shop/${productData.category}`
-            }, {
-              label: productData.name
-            }
+          :links="[
+            { label: 'Home', to: '/' },
+            { label: capitalize(product.category), to: `/shop/${product.category}` },
+            { label: product.name }
           ]"
-          :ui="{
-            active: 'text-black'
-          }"
+          :ui="{ active: 'text-black' }"
         />
     
         <div class="grid md:grid-cols-2 items-start gap-8">
           <div class="flex justify-center">
             <img
-              :src="`${config.storageApiBaseUrl + productData.image}`"
-              :alt="productData.name"
+              :src="`${storageBaseUrl + product.image}`"
+              :alt="product.name"
               width="1000"
               height="1000"
             >
@@ -106,32 +100,32 @@ function handleQuantity (value: number) {
     
           <div class="space-y-6">
             <div class="space-y-2">
-              <h2 class="text-3xl">{{ productData.name }}</h2>
+              <h2 class="text-3xl">{{ product.name }}</h2>
               <div class="flex gap-2 text-sm">
                 <div class="py-1 px-3 border border-black bg-white">
-                  {{ (productData.stock > 0) ? `${productData.stock} left` : 'Out of stock' }}
+                  {{ (product.stock > 0) ? `${product.stock} left` : 'Out of stock' }}
                 </div>
                 <div v-if="isNewRelease" class="py-1 px-3 border border-black bg-teal-200">
                   New
                 </div>
-                <div v-if="productData.discount_percentage > 0" class="py-1 px-3 border border-black bg-yellow-300">
-                  -{{ productData.discount_percentage }}%
+                <div v-if="product.discount_percentage > 0" class="py-1 px-3 border border-black bg-yellow-300">
+                  -{{ product.discount_percentage }}%
                 </div>
               </div>
             </div>
             
             <div class="flex gap-2 text-2xl">
-              <s v-if="productData.discount_percentage > 0">{{ Rp(productData.price) }}</s>
+              <s v-if="product.discount_percentage > 0">{{ Rp(product.price) }}</s>
               <p>{{ Rp(finalPrice) }}</p>
             </div>
     
             <URadioGroup
-              v-if="typeof productData.sizes === 'object'"
+              v-if="typeof product.sizes === 'object'"
               v-model="selectedSize"
               color="yellow"
               legend="Choose size"
-              :options="productData.sizes"
-              :disabled="productData.stock < 1"
+              :options="product.sizes"
+              :disabled="product.stock < 1"
             >
               <template #label="{ option }">
                 <p class="text-base">
@@ -148,8 +142,8 @@ function handleQuantity (value: number) {
                     size="xl"
                     :model-value="quantity"
                     :min="1"
-                    :max="productData.stock"
-                    :disabled="productData.stock < 1"
+                    :max="product.stock"
+                    :disabled="product.stock < 1"
                     :ui="{ rounded: 'rounded-none'}"
                     @update:model-value="handleQuantity"
                   />
@@ -161,7 +155,7 @@ function handleQuantity (value: number) {
                   label="ADD TO CART"
                   color="black"
                   size="xl"
-                  :disabled="(selectedSize === undefined || quantity < 1) || productData.stock < 1"
+                  :disabled="(selectedSize === undefined || quantity < 1) || product.stock < 1"
                   @click="addToCart"
                 />
               </div>
@@ -188,15 +182,11 @@ function handleQuantity (value: number) {
               </template>
 
               <template #product-info>
-                <p class="text-lg text-black">
-                  {{ productData.description }}
-                </p>
+                <p class="text-lg text-black">{{ product.description }}</p>
               </template>
     
               <template #item="{ item }">
-                <p class="text-lg text-black">
-                  {{ item.content }}
-                </p>
+                <p class="text-lg text-black">{{ item.content }}</p>
               </template>
             </UAccordion>
           </div>
@@ -206,6 +196,6 @@ function handleQuantity (value: number) {
       <div v-else class="text-center mb-14">
         <p>Product not found</p>
       </div>
-    </UContainer>
-  </div>
+    </div>
+  </UContainer>
 </template>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-const product = useProductStore()
+const { get } = useProduct()
 
-const { data: productsData } = await useAsyncData(
-  'newReleasedProducts', () => product.all({new_release: true})
+const { data: products } = await useAsyncData(
+  'newReleasedProducts', () => get({ new_release: true })
 )
 </script>
 
 <template>
-  <UContainer>
+  <UContainer v-if="!!products">
     <div class="flex-col space-y-4">
       <div class="flex justify-between items-center gap-4">
         <h2 class="text-2xl lg:text-3xl text-center">
@@ -26,7 +26,7 @@ const { data: productsData } = await useAsyncData(
   
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
         <ProductNewRelease
-          v-for="product in productsData"
+          v-for="product in products"
           :key="product.id"
           :product="product"
         />

@@ -1,17 +1,18 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  appConfig: {
-    midtransClientKey: process.env.MIDTRANS_CLIENT_KEY,
-    apiBaseUrl: process.env.API_BASE_URL,
-    storageApiBaseUrl: `${process.env.API_BASE_URL}/storage`
+  runtimeConfig: {
+    public: {
+      midtransClientKey: 'SB-Mid-client-TlYfxuK33HyfqBXk',
+      backendBaseUrl: 'http://localhost:8080',
+      frontendUrlBaseUrl: 'http://localhost:3000',
+      storageBaseUrl: 'http://localhost:8080/storage'
+    }
   },
   devtools: { enabled: true },
-  // devServer: { host: '192.168.11.121' },
   css: ['~/assets/css/main.css'],
   modules: [
     '@nuxt/ui',
-    '@nuxtjs/google-fonts',
-    '@pinia/nuxt'
+    '@nuxtjs/google-fonts'
   ],
   colorMode: { preference: 'light' },
   googleFonts: {

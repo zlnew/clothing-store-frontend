@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import type { CartItemWithProduct } from '~/stores/useCartStore'
-
 const props = defineProps<{
-  item: CartItemWithProduct
+  item: ShoppingCartItem
 }>()
 
-const config = useAppConfig()
-const cart = useCartStore()
+const { storageBaseUrl } = useRuntimeConfig().public
+const { update, destroy } = useShoppingCart()
 
 const quantity = computed({
   get: () => props.item.quantity,
   set(newValue) {
-    props.item.quantity = newValue
+    const stock = props.item.product.stock
+    if (newValue <= stock) {
+      props.item.quantity = newValue
+    } else {
+      props.item.quantity = 1
+    }
   }
 })
 
@@ -22,24 +25,33 @@ const finalPrice = computed(() => {
   return price - discountedAmount
 })
 
-function onQuantityChange (quantity: number) {
-  cart.update({ ...props.item, quantity })
-}
+const { submit: updateItem } = useSubmit(
+  () => update({
+    id: props.item.id,
+    product_id: props.item.product_id,
+    quantity: quantity.value
+  })
+)
 
-function deleteItem () {
-  const { id, size } = props.item
-  cart.remove({id, size})
+const { submit: destroyItem } = useSubmit(
+  () => destroy(props.item.id)
+)
+
+async function onQuantityChange (newQuantity: number) {
+  quantity.value = newQuantity
+  await updateItem()
 }
 </script>
 
 <template>
   <div class="group relative grid grid-cols-6 items-start gap-4">
     <img
-      :src="`${config.storageApiBaseUrl}/${item.product.image}`"
+      :src="`${storageBaseUrl}/${item.product.image}`"
       :alt="item.product.name"
       width="500"
       height="500"
     >
+    
     <div class="col-span-3 space-y-2">
       <div>
         <NuxtLink :to="`/product/${item.product.category}/${item.product.slug}`">
@@ -53,20 +65,24 @@ function deleteItem () {
       <div class="max-w-16">
         <UInput
           type="number"
-          v-model="quantity"
           size="xs"
+          :model-value="item.quantity"
+          :min="1"
+          :max="item.product.stock"
           @update:model-value="onQuantityChange"
         />
       </div>
     </div>
-    <p class="text-lg">{{ Rp(quantity * finalPrice) }}</p>
+
+    <p>{{ Rp(quantity * finalPrice) }}</p>
+
     <div class="text-right">
       <UButton
         icon="i-mdi-close"
         color="black"
         variant="ghost"
         size="xs"
-        @click="deleteItem"
+        @click="destroyItem"
       />
     </div>
   </div>

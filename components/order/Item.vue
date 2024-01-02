@@ -1,10 +1,34 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   data: Transaction
 }>()
 
-const config = useAppConfig()
-const { pay, cancel } = useTransactionStore()
+const toast = useToast()
+const { storageBaseUrl } = useRuntimeConfig().public
+const { update, refresh } = useTransaction()
+
+const { submit: cancel, processing: cancelling } = useSubmit(
+  () => handleCancel(), {
+    onSuccess: async (result) => {
+      await refresh()
+      toast.add({
+        title: result.message,
+        color: 'green'
+      })
+    }
+  }
+)
+
+async function handleCancel () {
+  return update({
+    orderId: props.data.order_id,
+    action: 'cancel'
+  })
+}
+
+function handlePayNow(snapURL: string) {
+  window.open(snapURL)
+}
 </script>
 
 <template>
@@ -33,7 +57,7 @@ const { pay, cancel } = useTransactionStore()
       class="group relative grid grid-cols-7 md:grid-cols-8 items-start gap-4"
     >
       <img
-        :src="`${config.storageApiBaseUrl}/${item.product.image}`"
+        :src="`${storageBaseUrl}/${item.product.image}`"
         :alt="item.product.name"
         width="500"
         height="500"
@@ -61,18 +85,20 @@ const { pay, cancel } = useTransactionStore()
       </div>
       <div class="flex flex-wrap justify-end gap-2">
         <UButton
-          v-if="data.status === 'pending'"
+          v-if="['created', 'pending'].includes(data.status)"
           label="Cancel"
           color="black"
+          variant="soft"
           size="lg"
-          @click="cancel(data.order_id)"
+          :loading="cancelling"
+          @click="cancel"
         />
         <UButton
-          v-if="data.status === 'pending'"
+          v-if="['created', 'pending'].includes(data.status)"
           label="Pay now"
           color="yellow"
           size="lg"
-          @click="pay(data.snap_url)"
+          @click="handlePayNow(data.snap_url)"
         />
         <UButton
           label="Detail"
