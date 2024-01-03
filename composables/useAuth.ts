@@ -1,6 +1,17 @@
 export type User = {
+  id: number
   name: string
   email?: string
+  email_verified_at: string | null
+  customer_details: CustomerDetails
+}
+
+export type CustomerDetails = {
+  id: number
+  user_id: number
+  phone_number: string
+  address: string
+  postal_code: string
 }
 
 export type LoginCredentials = {
@@ -27,7 +38,6 @@ export const useUser = <T = User>() => {
 }
 
 export const useAuth = <T = User>() => {
-  const router = useRouter()
   const user = useUser<T>()
   
   const isLoggedIn = computed(() => !!user.value)
@@ -53,8 +63,7 @@ export const useAuth = <T = User>() => {
   }
 
   async function resendEmailVerification () {
-    return $larafetch<{ status: string }>(
-      '/email/verification-notification', {
+    return $larafetch<{ status: string }>('/email/verification-notification', {
         method: 'post'
       }
     )
@@ -62,16 +71,12 @@ export const useAuth = <T = User>() => {
 
   async function logout () {
     if (!isLoggedIn.value) return
-
     await $larafetch('/logout', { method: 'post' })
     user.value = null
-
-    await router.push('/')
   }
 
   async function forgotPassword (email: string) {
-    return $larafetch<{ status: string }>(
-      '/forgot-password', {
+    return $larafetch<{ status: string }>('/forgot-password', {
         method: 'post',
         body: { email }
       }
@@ -79,8 +84,7 @@ export const useAuth = <T = User>() => {
   }
 
   async function resetPassword (credentials: ResetPasswordCredentials) {
-    return $larafetch<{ status: string }>(
-      '/reset-password', {
+    return $larafetch<{ status: string }>('/reset-password', {
         method: 'post',
         body: credentials
       }

@@ -1,7 +1,7 @@
 export default defineNuxtPlugin(async () => {
-  const user = useUser()
   const { refresh } = useAuth()
+  const authorized = await $larafetch('/api/authorize')
 
-  if (!!user.value) return
+  if (!authorized) return
   await refresh()
 })

@@ -1,9 +1,12 @@
 <script setup lang="ts">
+const toast = useToast()
 const { logout } = useAuth()
 
-function handleLogout () {
-  logout().then(() => window.location.reload())
-}
+const { submit } = useSubmit(
+  () => logout(), {
+    onSuccess: () => toast.add({ title: 'Logout Successful' })
+  }
+)
 </script>
 
 <template>
@@ -14,7 +17,7 @@ function handleLogout () {
       color="black"
       size="lg"
       class="uppercase"
-      @click="handleLogout"
+      @click="submit"
     />
   </div>
 </template>

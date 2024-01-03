@@ -1,12 +1,9 @@
 <script setup lang="ts">
 const router = useRouter()
 const { user } = useAuth()
-
 const isOpen = ref(false)
 
-onMounted(() => {
-  router.beforeEach(() => { isOpen.value = false })
-})
+onMounted(() => { router.beforeEach(() => { isOpen.value = false }) })
 </script>
 
 <template>
@@ -24,7 +21,6 @@ onMounted(() => {
             size="md"
             :icon="user ? undefined : 'i-mdi-person'"
             :alt="user ? user.name : 'Avatar'"
-            :ui="{ rounded: 'rounded-none' }"
             class="border border-black"
           />
         </UChip>
@@ -34,7 +30,6 @@ onMounted(() => {
             size="md"
             icon="i-mdi-person"
             alt="Avatar"
-            :ui="{ rounded: 'rounded-none' }"
             class="border border-black"
           />
         </template>
@@ -95,14 +90,14 @@ onMounted(() => {
             </p>
             <ul class="text-xl space-y-2">
               <li>
-                <NuxtLink exact-active-class="font-bold" to="/profile">
+                <NuxtLink exact-active-class="font-bold" to="/my-profile">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> My Profile
                   </div>
                 </NuxtLink>
               </li>
               <li>
-                <NuxtLink exact-active-class="font-bold" to="/order/active">
+                <NuxtLink exact-active-class="font-bold" to="/my-order/active">
                   <div class="flex items-center">
                     <UIcon name="i-mdi-menu-right" /> My Order
                   </div>

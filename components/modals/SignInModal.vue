@@ -2,10 +2,7 @@
 import SignUpModal from './SignUpModal.vue'
 import { object, string, type InferType, boolean } from 'yup'
 
-const props = defineProps<{
-  refUrl?: string
-}>()
-
+const toast = useToast()
 const modal = useModal()
 const { login } = useAuth()
 
@@ -26,7 +23,8 @@ const state = reactive<Schema>({
 const { submit, processing, validationMessage } = useSubmit(
   () => login(state), {
     onSuccess: () => {
-      window.location.href = props.refUrl || window.location.href
+      toast.add({ title: 'Login Successful' })
+      modal.close()
     }
   }
 )
@@ -35,9 +33,6 @@ function openSignUpModal () {
   modal.open({
     title: 'Sign Up to Zee Apparel',
     component: SignUpModal,
-    componentProps: {
-      refUrl: window.location.href
-    }
   })
 }
 </script>

@@ -7,7 +7,7 @@ const { data: promo } = useAsyncData(
 </script>
 
 <template>
-  <div v-if="promo" class="p-2 text-center bg-black text-white">
+  <div v-if="!!promo" class="p-2 text-center bg-black text-white">
     <UContainer>
       {{ promo.name }} is on! {{ promo.discount_percentage }}% off sitewide using {{ promo.code.toUpperCase() }} at checkout
     </UContainer>

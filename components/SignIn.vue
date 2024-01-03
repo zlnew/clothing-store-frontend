@@ -6,12 +6,11 @@ const emit = defineEmits(['modalOpen'])
 const { open } = useModal()
 
 function openSignInModal () {
-  emit('modalOpen')
   open({
     title: 'Sign In to Zee Apparel',
     component: SignInModal,
-    componentProps: { refUrl: window.location.href }
   })
+  emit('modalOpen')
 }
 </script>
 

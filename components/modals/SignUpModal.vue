@@ -2,10 +2,7 @@
 import SignInModal from './SignInModal.vue'
 import { object, string, ref as yupRef, type InferType } from 'yup'
 
-const props = defineProps<{
-  refUrl?: string
-}>()
-
+const toast = useToast()
 const modal = useModal()
 const { register } = useAuth()
 
@@ -29,7 +26,8 @@ const state = reactive<Schema>({
 const { submit, processing, validationMessage } = useSubmit(
   () => register(state), {
     onSuccess: () => {
-      window.location.href = props.refUrl || window.location.href
+      modal.close()
+      toast.add({ title: 'Login Successful' })
     }
   }
 )
@@ -37,10 +35,7 @@ const { submit, processing, validationMessage } = useSubmit(
 function openSignInModal () {
   modal.open({
     title: 'Sign In to Zee Apparel',
-    component: SignInModal,
-    componentProps: {
-      refUrl: window.location.href
-    }
+    component: SignInModal
   })
 }
 </script>

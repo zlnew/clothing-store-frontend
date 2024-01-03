@@ -3,6 +3,9 @@ export default defineAppConfig({
     breadcrumb: {
       active: 'text-black'
     },
+    avatar: {
+      rounded: 'rounded-none'
+    },
     chip: {
       base: 'ring-black text-black',
       background: 'bg-yellow-300'
