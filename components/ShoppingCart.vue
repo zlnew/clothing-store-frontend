@@ -25,39 +25,20 @@ onMounted(() => router.beforeEach(() => { slideover.value = false }))
 
 <template>
   <div class="flex flex-col items-center">
-    <ClientOnly>
-      <UChip
-        :text="items?.length || 0"
-        color="gray"
-        size="3xl"
-        :ui="{ base: 'ring-black text-black', background: 'bg-yellow-300' }"
-      >
-        <UButton
-          icon="i-mdi-cart-outline"
-          color="black"
-          variant="outline"
-          size="lg"
-          @click="handleSlideover"
-        />
-      </UChip>
-
-      <template #fallback>
-        <UChip
-          text="0"
-          color="gray"
-          size="3xl"
-          :ui="{ base: 'ring-black text-black', background: 'bg-yellow-300' }"
-        >
-          <UButton
-            icon="i-mdi-cart-outline"
-            color="black"
-            variant="outline"
-            size="lg"
-            @click="handleSlideover"
-          />
-        </UChip>
-      </template>
-    </ClientOnly>
+    <UChip
+      :text="items?.length || 0"
+      color="gray"
+      size="3xl"
+      :ui="{ base: 'ring-black text-black', background: 'bg-yellow-300' }"
+    >
+      <UButton
+        icon="i-mdi-cart-outline"
+        color="black"
+        variant="outline"
+        size="lg"
+        @click="handleSlideover"
+      />
+    </UChip>
 
     <USlideover v-model="slideover">
       <div class="h-full flex flex-col justify-between">

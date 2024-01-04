@@ -13,12 +13,12 @@ const statusButtons = [
   { to: '/my-order/finished', label: 'Finished', key: 'finished' }
 ]
 
-const { orders, refresh } = useTransaction()
+const route = useRoute()
+const status = route.params.status as string
+const { get } = useTransaction()
 
-const { pending } = await useAsyncData(
-  'orders', () => refresh(), {
-    server: false
-  }
+const { data: orders, refresh, pending } = await useAsyncData(
+  'orders', () => get(status)
 )
 </script>
 

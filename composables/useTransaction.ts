@@ -1,4 +1,4 @@
-import type { Product } from "./useProduct"
+import type { Product } from './useProduct'
 
 export type Transaction = {
   id: number
@@ -54,27 +54,13 @@ export type StoreTransactionResponse = {
   snap_url: string
 }
 
-export const useOrder = <T = Transaction>() => {
-  return useState<T[] | null | undefined>('orders', () => undefined)
-}
-
 export const useTransaction = <T = Transaction>() => {
-  const orders = useOrder<Transaction>()
-
-  async function refresh () {
-    try {
-      const data = await fetchOrders()
-      orders.value = data
-    } catch {
-      orders.value = null
-    }
-  }
-
-  async function get (status: 'active' | 'cancelled' | 'finished') {
+  async function get (status: string) {
     const res = await $larafetch<{ data: T[] }>('/api/transactions', {
       method: 'get',
       params: { status }
     })
+
     return res.data
   }
 
@@ -92,6 +78,7 @@ export const useTransaction = <T = Transaction>() => {
     const res = await $larafetch<{ data: T }>(`/api/transactions/${orderId}`, {
       method: 'get'
     })
+
     return res.data
   }
 
@@ -103,20 +90,9 @@ export const useTransaction = <T = Transaction>() => {
   }
 
   return {
-    orders,
     store,
     get,
     show,
-    update,
-    refresh
+    update
   }
-}
-
-export const fetchOrders = async <T = Transaction>() => {
-  const status = useRoute().params.status
-  const res = await $larafetch<{ data: T[] }>('/api/transactions', {
-    method: 'get',
-    params: { status }
-  })
-  return res.data
 }

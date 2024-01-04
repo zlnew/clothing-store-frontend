@@ -23,6 +23,7 @@ export type GetProductsParams = {
 export const useProduct = <T = Product>() => {
   async function get (params: GetProductsParams) {
     const res = await $larafetch<{ data: T[] }>('/api/products', {
+      method: 'get',
       params
     })
 
@@ -30,7 +31,9 @@ export const useProduct = <T = Product>() => {
   }
 
   async function show (slug: string) {
-    const res = await $larafetch<{ data: T }>(`/api/products/${slug}`)
+    const res = await $larafetch<{ data: T }>(`/api/products/${slug}`, {
+      method: 'get'
+    })
 
     return res.data
   }

@@ -145,6 +145,7 @@ export const fetchCartItems = async <T = ShoppingCartItem>() => {
   const res = await $larafetch<{ data: T[] }>('/api/cart-items', {
     method: 'get'
   })
+
   return res.data
 }
 
@@ -154,6 +155,7 @@ function calculateSubtotal (items: ShoppingCartItem[]) {
     const price = curr.product.price
     const discountedAmount = (discount_percentage / 100) * price
     const finalPrice = price - discountedAmount
+    
     return prev + finalPrice * curr.quantity
   }, 0)
 }

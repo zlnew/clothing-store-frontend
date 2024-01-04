@@ -64,31 +64,30 @@ export const useAuth = <T = User>() => {
 
   async function resendEmailVerification () {
     return $larafetch<{ status: string }>('/email/verification-notification', {
-        method: 'post'
-      }
-    )
+      method: 'post'
+    })
   }
 
   async function logout () {
     if (!isLoggedIn.value) return
+
     await $larafetch('/logout', { method: 'post' })
+
     user.value = null
   }
 
   async function forgotPassword (email: string) {
     return $larafetch<{ status: string }>('/forgot-password', {
-        method: 'post',
-        body: { email }
-      }
-    )
+      method: 'post',
+      body: { email }
+    })
   }
 
   async function resetPassword (credentials: ResetPasswordCredentials) {
     return $larafetch<{ status: string }>('/reset-password', {
-        method: 'post',
-        body: credentials
-      }
-    )
+      method: 'post',
+      body: credentials
+    })
   }
 
   return {

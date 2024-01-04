@@ -1,4 +1,4 @@
-import { $fetch } from 'ofetch'
+import { $fetch, FetchError } from 'ofetch'
 import { parseCookies } from 'h3'
 
 const CSRF_COOKIE = 'XSRF-TOKEN'
@@ -6,10 +6,9 @@ const CSRF_HEADER = 'X-XSRF-TOKEN'
 
 export const $larafetch = $fetch.create({
   credentials: 'include',
-  async onRequest({ options }) {
+  async onRequest({ request, options }) {
     const { backendBaseUrl, frontendUrlBaseUrl } = useRuntimeConfig().public
     const event = typeof useEvent === 'function' ? useEvent() : null
-
     let token = event
       ? parseCookies(event)[CSRF_COOKIE]
       : useCookie(CSRF_COOKIE).value
@@ -17,30 +16,30 @@ export const $larafetch = $fetch.create({
     if (
       process.client &&
       ['post', 'delete', 'put', 'patch'].includes(
-        options.method?.toLowerCase() ?? ''
+        options?.method?.toLowerCase() ?? ''
       )
-    ) {      
+    ) {
       token = await initCsrf()
     }
 
     let headers: any = {
       accept: 'application/json',
-      ...options.headers,
-      ...(token && { [CSRF_HEADER]: token })
+      ...options?.headers,
+      ...(token && { [CSRF_HEADER]: token }),
     }
 
     if (process.server) {
       const cookieString = event
         ? event.headers.get('cookie')
         : useRequestHeaders(['cookie']).cookie
-      
+
       headers = {
         ...headers,
         ...(cookieString && { cookie: cookieString }),
-        referrer: frontendUrlBaseUrl
+        referer: frontendUrlBaseUrl,
       }
     }
-    
+
     options.headers = headers
     options.baseURL = backendBaseUrl
   },
@@ -49,10 +48,10 @@ export const $larafetch = $fetch.create({
     if ([500].includes(status)) {
       console.error('[Laravel Error]', response.statusText, response._data)
     }
-  }
+  },
 })
 
-async function initCsrf () {
+async function initCsrf() {
   const { backendBaseUrl } = useRuntimeConfig().public
   const existingToken = useCookie(CSRF_COOKIE).value
 
@@ -60,7 +59,7 @@ async function initCsrf () {
 
   await $fetch('/sanctum/csrf-cookie', {
     baseURL: backendBaseUrl,
-    credentials: 'include'
+    credentials: 'include',
   })
 
   return useCookie(CSRF_COOKIE).value

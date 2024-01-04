@@ -11,6 +11,7 @@ export const usePromo = <T = Voucher>() => {
     const res: { data: T[] } = await $larafetch('/api/vouchers', {
       method: 'get'
     })
+
     return res.data
   }
 
@@ -19,6 +20,7 @@ export const usePromo = <T = Voucher>() => {
       method: 'get',
       params: { active: true }
     })
+
     return res.data
   }
 
@@ -26,6 +28,7 @@ export const usePromo = <T = Voucher>() => {
     const res: { data: T } = await $larafetch(`/api/vouchers/${code}`, {
       method: 'get'
     })
+    
     return res.data
   }
 

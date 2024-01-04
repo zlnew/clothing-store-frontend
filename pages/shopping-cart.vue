@@ -40,23 +40,17 @@ async function handleApplyPromoCode () {
 
     <div class="grid md:grid-cols-3 gap-14">
       <div class="md:col-span-2 flex flex-col gap-4">
-        <ClientOnly
-          tag="p"
-          fallback="Getting your shopping cart ..."
-          class="min-h-48 flex items-center justify-center"
-        >
-          <div v-if="!items?.length" class="min-h-48 flex items-center justify-center">
-            <p>Your shopping cart is empty</p>
-          </div>
-          
-          <div v-else class="flex flex-col gap-8 min-h-48">
-            <CartItem
-              v-for="item in items"
-              :key="item.id"
-              :item="item"
-            />
-          </div>
-        </ClientOnly>
+        <div v-if="!items?.length" class="min-h-48 flex items-center justify-center">
+          <p>Your shopping cart is empty</p>
+        </div>
+        
+        <div v-else class="flex flex-col gap-8 min-h-48">
+          <CartItem
+            v-for="item in items"
+            :key="item.id"
+            :item="item"
+          />
+        </div>
         
         <hr class="border-black">
 
@@ -98,9 +92,7 @@ async function handleApplyPromoCode () {
         <div class="space-y-2">
           <div class="text-lg flex items-center justify-between gap-2">
             <p>Subtotal</p>
-            <ClientOnly fallback-tag="p" fallback="Rp 0">
-              <p>{{ Rp(amount.subtotal) }}</p>
-            </ClientOnly>
+            <p>{{ Rp(amount.subtotal) }}</p>
           </div>
 
           <div class="text-lg flex items-center justify-between gap-2">
@@ -112,36 +104,20 @@ async function handleApplyPromoCode () {
 
           <div class="text-xl flex items-center justify-between gap-2">
             <p>Total</p>
-            <ClientOnly fallback-tag="strong" fallback="Rp 0">
-              <strong>{{ Rp(amount.total) }}</strong>
-            </ClientOnly>
+            <strong>{{ Rp(amount.total) }}</strong>
           </div>
         </div>
 
-        <ClientOnly>
-          <UButton
-            block
-            label="Checkout"
-            color="yellow"
-            size="xl"
-            class="uppercase"
-            :disabled="!items?.length"
-            :loading="processing"
-            @click="checkout"
-          />
-
-          <template #fallback>
-            <UButton
-              disabled
-              block
-              label="Checkout"
-              color="yellow"
-              size="xl"
-              class="uppercase"
-              @click="checkout"
-            />
-          </template>
-        </ClientOnly>
+        <UButton
+          block
+          label="Checkout"
+          color="yellow"
+          size="xl"
+          class="uppercase"
+          :disabled="!items?.length"
+          :loading="processing"
+          @click="checkout"
+        />
       </div>
     </div>
   </PageContainer>

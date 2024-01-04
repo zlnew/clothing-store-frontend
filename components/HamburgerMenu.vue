@@ -15,25 +15,14 @@ onMounted(() => { router.beforeEach(() => { isOpen.value = false }) })
       :padded="false"
       @click="isOpen = true"
     >
-      <ClientOnly>
-        <UChip :show="!!user">
-          <UAvatar
-            size="md"
-            :icon="user ? undefined : 'i-mdi-person'"
-            :alt="user ? user.name : 'Avatar'"
-            class="border border-black"
-          />
-        </UChip>
-
-        <template #fallback>
-          <UAvatar
-            size="md"
-            icon="i-mdi-person"
-            alt="Avatar"
-            class="border border-black"
-          />
-        </template>
-      </ClientOnly>
+      <UChip :show="!!user">
+        <UAvatar
+          size="md"
+          :icon="user ? undefined : 'i-mdi-person'"
+          :alt="user ? user.name : 'Avatar'"
+          class="border border-black"
+        />
+      </UChip>
     </UButton>
 
     <USlideover v-model="isOpen">

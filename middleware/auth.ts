@@ -1,4 +1,4 @@
 export default defineNuxtRouteMiddleware (async () => {
-  const authorized = await $larafetch('/api/authorize')
-  if (!authorized) return navigateTo('/')
+  const user = useUser()
+  if (!user.value) return navigateTo('/', { replace: true })
 })
