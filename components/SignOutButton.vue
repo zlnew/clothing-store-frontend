@@ -1,16 +1,21 @@
 <script setup lang="ts">
+const emit = defineEmits(['signOut'])
+
 const toast = useToast()
-const { logout } = useAuth()
+const { user, logout } = useAuth()
 
 const { submit } = useSubmit(
   () => logout(), {
-    onSuccess: () => toast.add({ title: 'Logout Successful' })
+    onSuccess: () => {
+      emit('signOut')
+      toast.add({ title: 'Logout Successful' })
+    }
   }
 )
 </script>
 
 <template>
-  <div>
+  <div v-if="user">
     <UButton
       block
       label="Sign Out"

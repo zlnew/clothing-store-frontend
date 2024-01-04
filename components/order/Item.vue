@@ -1,16 +1,17 @@
 <script setup lang="ts">
+const emit = defineEmits(['refresh'])
 const props = defineProps<{
   data: Transaction
 }>()
 
 const toast = useToast()
 const { storageBaseUrl } = useRuntimeConfig().public
-const { update, refresh } = useTransaction()
+const { update } = useTransaction()
 
 const { submit: cancel, processing: cancelling } = useSubmit(
   () => handleCancel(), {
     onSuccess: async (result) => {
-      await refresh()
+      emit('refresh')
       toast.add({
         title: result.message,
         color: 'green'

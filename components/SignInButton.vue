@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import SignInModal from './modals/SignInModal.vue'
 
-const emit = defineEmits(['modalOpen'])
+const emit = defineEmits(['signIn'])
 
-const { open } = useModal()
+const modal = useModal()
+const { user } = useAuth()
 
 function openSignInModal () {
-  open({
+  emit('signIn')
+  modal.open({
     title: 'Sign In to Zee Apparel',
     component: SignInModal,
   })
-  emit('modalOpen')
 }
 </script>
 
 <template>
-  <div>
+  <div v-if="!user">
     <UButton
       block
       label="Sign In"

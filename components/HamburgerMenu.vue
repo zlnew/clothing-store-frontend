@@ -104,8 +104,8 @@ onMounted(() => { router.beforeEach(() => { isOpen.value = false }) })
         </div>
 
         <div class="p-8">
-          <SignOut v-if="user" />
-          <SignIn v-else @modal-open="isOpen = false" />
+          <SignOutButton @sign-out="isOpen = false" />
+          <SignInButton @sign-in="isOpen = false" />
         </div>
       </div>
     </USlideover>
