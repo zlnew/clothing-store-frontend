@@ -10,7 +10,11 @@ const breadcrumbLinks = [
 const { items, subtotal, discount, checkoutData, getDiscount } = useShoppingCart()
 const { store } = useTransaction()
 
-const { submit: checkout, processing, validationMessage } = useSubmit(
+const {
+  submit: placeOrder,
+  processing: placingOrder,
+  validationMessage: placeOrderValidationMessage
+} = useSubmit(
   () => store(checkoutData.value), {
     onSuccess: () => {
       window.location.href = '/my-order/active'
@@ -38,7 +42,7 @@ async function handleApplyPromoCode () {
 
 <template>
   <PageContainer :breadcrumb-links="breadcrumbLinks">
-    <ErrorNotification :message="validationMessage" @close="validationMessage = null" />
+    <ErrorNotification :message="placeOrderValidationMessage" @close="placeOrderValidationMessage = null" />
 
     <div class="grid md:grid-cols-3 gap-14">
       <div class="md:col-span-2 flex flex-col gap-4">
@@ -112,13 +116,12 @@ async function handleApplyPromoCode () {
 
         <UButton
           block
-          label="Checkout"
+          label="Place Order"
           color="yellow"
           size="xl"
-          class="uppercase"
           :disabled="!items?.length"
-          :loading="processing"
-          @click="checkout"
+          :loading="placingOrder"
+          @click="placeOrder"
         />
       </div>
     </div>
