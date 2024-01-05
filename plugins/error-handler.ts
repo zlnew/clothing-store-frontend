@@ -1,8 +1,8 @@
 import { FetchError } from 'ofetch'
 
-export default defineNuxtPlugin(async (nuxtApp) => {
-  nuxtApp.hook('vue:error', (error, instance, info) => {
-    if (!(error instanceof FetchError)) throw error
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.hook('vue:error', (error) => {
+    if (!(error instanceof FetchError)) { throw error }
 
     const status = error.response?.status ?? -1
 

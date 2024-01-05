@@ -10,7 +10,7 @@ function openSignInModal () {
   emit('signIn')
   modal.open({
     title: 'Sign In to Zee Apparel',
-    component: SignInModal,
+    component: SignInModal
   })
 }
 </script>

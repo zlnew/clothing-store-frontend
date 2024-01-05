@@ -30,7 +30,9 @@ onMounted(() => { router.beforeEach(() => { isOpen.value = false }) })
         <div class="p-8 border-b border-black flex items-center justify-between">
           <div class="w-fit border border-black bg-yellow-300 p-2">
             <NuxtLink to="/">
-              <p class="text-2xl font-normal">Zee Apparel</p>
+              <p class="text-2xl font-normal">
+                Zee Apparel
+              </p>
             </NuxtLink>
           </div>
           <UButton
@@ -44,7 +46,9 @@ onMounted(() => { router.beforeEach(() => { isOpen.value = false }) })
         <div class="p-8 border-b border-black">
           <div class="space-y-8">
             <div class="space-y-4">
-              <p class="font-bold text-2xl">Category</p>
+              <p class="font-bold text-2xl">
+                Category
+              </p>
               <ul class="text-xl space-y-2">
                 <li>
                   <NuxtLink exact-active-class="font-bold" to="/shop/all">

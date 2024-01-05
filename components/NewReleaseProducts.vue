@@ -23,7 +23,7 @@ const { data: products } = await useAsyncData(
           class="uppercase"
         />
       </div>
-  
+
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
         <ProductNewRelease
           v-for="product in products"

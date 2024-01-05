@@ -12,7 +12,9 @@ const { store } = useTransaction()
 
 const { submit: checkout, processing, validationMessage } = useSubmit(
   () => store(checkoutData.value), {
-    onSuccess: () => window.location.href = '/my-order/active'
+    onSuccess: () => {
+      window.location.href = '/my-order/active'
+    }
   }
 )
 
@@ -29,7 +31,7 @@ const amount = computed(() => {
 
 async function handleApplyPromoCode () {
   if (checkoutData.value.voucher_code) {
-    getDiscount(checkoutData.value.voucher_code)
+    await getDiscount(checkoutData.value.voucher_code)
   }
 }
 </script>
@@ -43,7 +45,7 @@ async function handleApplyPromoCode () {
         <div v-if="!items?.length" class="min-h-48 flex items-center justify-center">
           <p>Your shopping cart is empty</p>
         </div>
-        
+
         <div v-else class="flex flex-col gap-8 min-h-48">
           <CartItem
             v-for="item in items"
@@ -51,7 +53,7 @@ async function handleApplyPromoCode () {
             :item="item"
           />
         </div>
-        
+
         <hr class="border-black">
 
         <div class="flex flex-col gap-4">

@@ -1,4 +1,4 @@
-import { $fetch, FetchError } from 'ofetch'
+import { $fetch } from 'ofetch'
 import { parseCookies } from 'h3'
 
 const CSRF_COOKIE = 'XSRF-TOKEN'
@@ -6,7 +6,7 @@ const CSRF_HEADER = 'X-XSRF-TOKEN'
 
 export const $larafetch = $fetch.create({
   credentials: 'include',
-  async onRequest({ request, options }) {
+  async onRequest ({ options }) {
     const { backendBaseUrl, frontendUrlBaseUrl } = useRuntimeConfig().public
     const event = typeof useEvent === 'function' ? useEvent() : null
     let token = event
@@ -25,7 +25,7 @@ export const $larafetch = $fetch.create({
     let headers: any = {
       accept: 'application/json',
       ...options?.headers,
-      ...(token && { [CSRF_HEADER]: token }),
+      ...(token && { [CSRF_HEADER]: token })
     }
 
     if (process.server) {
@@ -36,30 +36,30 @@ export const $larafetch = $fetch.create({
       headers = {
         ...headers,
         ...(cookieString && { cookie: cookieString }),
-        referer: frontendUrlBaseUrl,
+        referer: frontendUrlBaseUrl
       }
     }
 
     options.headers = headers
     options.baseURL = backendBaseUrl
   },
-  async onResponseError({ response }) {
+  onResponseError ({ response }) {
     const status = response.status
     if ([500].includes(status)) {
       console.error('[Laravel Error]', response.statusText, response._data)
     }
-  },
+  }
 })
 
-async function initCsrf() {
+async function initCsrf () {
   const { backendBaseUrl } = useRuntimeConfig().public
   const existingToken = useCookie(CSRF_COOKIE).value
 
-  if (existingToken) return existingToken
+  if (existingToken) { return existingToken }
 
   await $fetch('/sanctum/csrf-cookie', {
     baseURL: backendBaseUrl,
-    credentials: 'include',
+    credentials: 'include'
   })
 
   return useCookie(CSRF_COOKIE).value

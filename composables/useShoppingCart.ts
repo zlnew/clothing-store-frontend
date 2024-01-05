@@ -1,11 +1,6 @@
 import type { Product } from './useProduct'
 import type { StoreTransaction } from './useTransaction'
 
-export type ShoppingCart = {
-  items: ShoppingCartItem[]
-  subtotal: number
-}
-
 export type ShoppingCartItem = {
   id: number
   user_id: number
@@ -13,6 +8,11 @@ export type ShoppingCartItem = {
   quantity: number
   size: string
   product: Product
+}
+
+export type ShoppingCart = {
+  items: ShoppingCartItem[]
+  subtotal: number
 }
 
 export type StoreItemBody = {
@@ -155,7 +155,7 @@ function calculateSubtotal (items: ShoppingCartItem[]) {
     const price = curr.product.price
     const discountedAmount = (discount_percentage / 100) * price
     const finalPrice = price - discountedAmount
-    
+
     return prev + finalPrice * curr.quantity
   }, 0)
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SignUpModal from './SignUpModal.vue'
 import { object, string, type InferType, boolean } from 'yup'
+import SignUpModal from './SignUpModal.vue'
 
 const toast = useToast()
 const modal = useModal()
@@ -32,7 +32,7 @@ const { submit, processing, validationMessage } = useSubmit(
 function openSignUpModal () {
   modal.open({
     title: 'Sign Up to Zee Apparel',
-    component: SignUpModal,
+    component: SignUpModal
   })
 }
 </script>
@@ -71,7 +71,7 @@ function openSignUpModal () {
         />
       </div>
 
-      <div class="mt-6 flex items-center justify-between gap-2">          
+      <div class="mt-6 flex items-center justify-between gap-2">
         <UButton
           label="Register"
           color="yellow"

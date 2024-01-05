@@ -17,21 +17,21 @@ export type ChangePasswordBody = {
 
 export const useProfile = () => {
   async function updateAccount (body: UpdateAccountBody) {
-    return $larafetch<{ message: string }>('/api/profiles/account', {
+    return await $larafetch<{ message: string }>('/api/profiles/account', {
       method: 'patch',
       body
     })
   }
 
   async function updateCustomerDetails (body: UpdateCustomerDetailsBody) {
-    return $larafetch<{ message: string }>('/api/profiles/customer-details', {
+    return await $larafetch<{ message: string }>('/api/profiles/customer-details', {
       method: 'patch',
       body
     })
   }
 
   async function changePassword (body: ChangePasswordBody) {
-    return $larafetch<{ message: string }>('/api/profiles/change-password', {
+    return await $larafetch<{ message: string }>('/api/profiles/change-password', {
       method: 'patch',
       body
     })

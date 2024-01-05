@@ -1,17 +1,17 @@
-export type User = {
-  id: number
-  name: string
-  email?: string
-  email_verified_at: string | null
-  customer_details: CustomerDetails
-}
-
 export type CustomerDetails = {
   id: number
   user_id: number
   phone_number: string
   address: string
   postal_code: string
+}
+
+export type User = {
+  id: number
+  name: string
+  email?: string
+  email_verified_at: string | null
+  customer_details: CustomerDetails
 }
 
 export type LoginCredentials = {
@@ -39,7 +39,7 @@ export const useUser = <T = User>() => {
 
 export const useAuth = <T = User>() => {
   const user = useUser<T>()
-  
+
   const isLoggedIn = computed(() => !!user.value)
 
   async function refresh () {
@@ -51,7 +51,7 @@ export const useAuth = <T = User>() => {
   }
 
   async function login (credentials: LoginCredentials) {
-    if (isLoggedIn.value) return
+    if (isLoggedIn.value) { return }
 
     await $larafetch('/login', { method: 'post', body: credentials })
     await refresh()
@@ -63,13 +63,13 @@ export const useAuth = <T = User>() => {
   }
 
   async function resendEmailVerification () {
-    return $larafetch<{ status: string }>('/email/verification-notification', {
+    return await $larafetch<{ status: string }>('/email/verification-notification', {
       method: 'post'
     })
   }
 
   async function logout () {
-    if (!isLoggedIn.value) return
+    if (!isLoggedIn.value) { return }
 
     await $larafetch('/logout', { method: 'post' })
 
@@ -77,14 +77,14 @@ export const useAuth = <T = User>() => {
   }
 
   async function forgotPassword (email: string) {
-    return $larafetch<{ status: string }>('/forgot-password', {
+    return await $larafetch<{ status: string }>('/forgot-password', {
       method: 'post',
       body: { email }
     })
   }
 
   async function resetPassword (credentials: ResetPasswordCredentials) {
-    return $larafetch<{ status: string }>('/reset-password', {
+    return await $larafetch<{ status: string }>('/reset-password', {
       method: 'post',
       body: credentials
     })
@@ -107,7 +107,7 @@ export const fetchCurrentUser = async <T = User>() => {
   try {
     return await $larafetch<T>('/api/user')
   } catch (error: any) {
-    if ([401, 419].includes(error?.response?.status)) return null
+    if ([401, 419].includes(error?.response?.status)) { return null }
     throw error
   }
 }

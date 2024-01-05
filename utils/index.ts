@@ -8,18 +8,18 @@ function slugify (str: string) {
 }
 
 function isNewReleasedProduct (dateString: string) {
-  const inputDate = new Date(dateString);
-  const currentDate = new Date();
-  const timeDifference = currentDate.getTime() - inputDate.getTime();
-  const monthsDifference = timeDifference / (1000 * 60 * 60 * 24 * 30) as number;
-  return monthsDifference < 30;
+  const inputDate = new Date(dateString)
+  const currentDate = new Date()
+  const timeDifference = currentDate.getTime() - inputDate.getTime()
+  const monthsDifference = timeDifference / (1000 * 60 * 60 * 24 * 30) as number
+  return monthsDifference < 30
 }
 
 function Rp (number?: number | null) {
   const formattedNumber = new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 0
   }).format(number || 0)
 
   return formattedNumber
@@ -28,5 +28,5 @@ function Rp (number?: number | null) {
 export {
   slugify,
   isNewReleasedProduct,
-  Rp,
+  Rp
 }

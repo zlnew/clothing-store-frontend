@@ -1,20 +1,5 @@
 import type { Product } from './useProduct'
 
-export type Transaction = {
-  id: number
-  order_id: number
-  user_id: number
-  voucher_id: number
-  gross_amount: number
-  note: string
-  snap_token: string
-  snap_url: string
-  status: TransactionStatus
-  details: TransactionDetail[]
-  created_at: string
-  updated_at: string
-}
-
 export type TransactionDetail = {
   id: number
   transaction_id: number
@@ -37,6 +22,21 @@ export type TransactionStatus =
   'on_process' |
   'on_delivery' |
   'finished'
+
+export type Transaction = {
+  id: number
+  order_id: number
+  user_id: number
+  voucher_id: number
+  gross_amount: number
+  note: string
+  snap_token: string
+  snap_url: string
+  status: TransactionStatus
+  details: TransactionDetail[]
+  created_at: string
+  updated_at: string
+}
 
 export type StoreTransaction = {
   voucher_code: string | undefined
@@ -65,7 +65,7 @@ export const useTransaction = <T = Transaction>() => {
   }
 
   async function store (body: StoreTransaction) {
-    return $larafetch<StoreTransactionResponse>('/api/transactions', {
+    return await $larafetch<StoreTransactionResponse>('/api/transactions', {
       method: 'post',
       body: {
         voucher_code: body.voucher_code || null,
@@ -83,7 +83,7 @@ export const useTransaction = <T = Transaction>() => {
   }
 
   async function update ({ orderId, action }: UpdateTransaction) {
-    return $larafetch<{ message: string }>(`/api/transactions/${orderId}`, {
+    return await $larafetch<{ message: string }>(`/api/transactions/${orderId}`, {
       method: 'patch',
       body: { action }
     })

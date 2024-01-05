@@ -1,12 +1,12 @@
 import type { UseFetchOptions } from 'nuxt/app'
 
-export function useLaraFetch<T>(
+export function useLaraFetch<T> (
   url: string | (() => string),
   options: UseFetchOptions<T> = {}
 ) {
   return useFetch(url, {
     $fetch: $larafetch,
-    async onResponseError ({ response }) {
+    onResponseError ({ response }) {
       const status = response.status
 
       if ([500].includes(status)) {

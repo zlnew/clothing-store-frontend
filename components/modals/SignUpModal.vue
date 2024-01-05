@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SignInModal from './SignInModal.vue'
 import { object, string, ref as yupRef, type InferType } from 'yup'
+import SignInModal from './SignInModal.vue'
 
 const toast = useToast()
 const modal = useModal()
@@ -67,8 +67,8 @@ function openSignInModal () {
 
         <UFormGroup label="Password" name="password">
           <UInput
-            type="password"
             v-model="state.password"
+            type="password"
             placeholder="Password"
             size="xl"
           />
@@ -76,8 +76,8 @@ function openSignInModal () {
 
         <UFormGroup label="Confirm Password" name="password_confirmation">
           <UInput
-            type="password"
             v-model="state.password_confirmation"
+            type="password"
             placeholder="Confirm Password"
             size="xl"
           />

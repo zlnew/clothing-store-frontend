@@ -44,11 +44,11 @@ const { data: orders, refresh, pending } = await useAsyncData(
         @click="refresh"
       />
     </div>
-    
+
     <div v-if="!orders?.length" class="h-96 flex justify-center items-center">
       <p>{{ pending ? 'Getting all your orders...' : "You don't have an order yet" }}</p>
     </div>
-    
+
     <div v-else class="min-h-96 flex flex-col gap-4">
       <OrderItem
         v-for="order in orders"

@@ -100,7 +100,9 @@ useSeoMeta({ title: () => product.value?.name || 'Product Not Found' })
 
       <div class="space-y-6">
         <div class="space-y-2">
-          <h2 class="text-3xl">{{ product.name }}</h2>
+          <h2 class="text-3xl">
+            {{ product.name }}
+          </h2>
           <div class="flex gap-2 text-sm">
             <div class="py-1 px-3 border border-black bg-white">
               {{ (product.stock > 0) ? `${product.stock} left` : 'Out of stock' }}
@@ -113,7 +115,7 @@ useSeoMeta({ title: () => product.value?.name || 'Product Not Found' })
             </div>
           </div>
         </div>
-        
+
         <div class="flex gap-2 text-2xl">
           <s v-if="product.discount_percentage > 0">{{ Rp(product.price) }}</s>
           <p>{{ Rp(finalPrice) }}</p>
@@ -182,11 +184,15 @@ useSeoMeta({ title: () => product.value?.name || 'Product Not Found' })
           </template>
 
           <template #product-info>
-            <p class="text-lg text-black">{{ product.description }}</p>
+            <p class="text-lg text-black">
+              {{ product.description }}
+            </p>
           </template>
 
           <template #item="{ item }">
-            <p class="text-lg text-black">{{ item.content }}</p>
+            <p class="text-lg text-black">
+              {{ item.content }}
+            </p>
           </template>
         </UAccordion>
       </div>

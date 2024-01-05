@@ -6,17 +6,7 @@ const props = defineProps<{
 const { storageBaseUrl } = useRuntimeConfig().public
 const { update, destroy } = useShoppingCart()
 
-const quantity = computed({
-  get: () => props.item.quantity,
-  set(newValue) {
-    const stock = props.item.product.stock
-    if (newValue <= stock) {
-      props.item.quantity = newValue
-    } else {
-      props.item.quantity = 1
-    }
-  }
-})
+const quantity = ref(props.item.quantity)
 
 const finalPrice = computed(() => {
   const discount_percentage = props.item.product.discount_percentage
@@ -51,27 +41,24 @@ async function onQuantityChange (newQuantity: number) {
       width="500"
       height="500"
     >
-    
+
     <div class="col-span-3 space-y-2">
       <div>
         <NuxtLink :to="`/product/${item.product.category}/${item.product.slug}`">
-          <h4 class="line-clamp-2">{{ item.product.name }} - {{ item.size }}</h4>
+          <h4 class="line-clamp-2">
+            {{ item.product.name }} - {{ item.size }}
+          </h4>
         </NuxtLink>
         <div class="flex gap-2">
           <s v-if="item.product.discount_percentage > 0">{{ Rp(item.product.price) }}</s>
           <p>{{ Rp(finalPrice) }}</p>
         </div>
       </div>
-      <div class="max-w-16">
-        <UInput
-          type="number"
-          size="xs"
-          :model-value="item.quantity"
-          :min="1"
-          :max="item.product.stock"
-          @update:model-value="onQuantityChange"
-        />
-      </div>
+      <CartItemQuantity
+        :quantity="item.quantity"
+        :stock="item.product.stock"
+        @update:quantity="onQuantityChange"
+      />
     </div>
 
     <p>{{ Rp(quantity * finalPrice) }}</p>

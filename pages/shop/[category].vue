@@ -18,7 +18,7 @@ const { data: products, refresh } = await useAsyncData(
   }
 )
 
-const debounceSearch = debounce(async () =>{
+const debounceSearch = debounce(async () => {
   await refresh()
   searching.value = false
 }, 500)
@@ -36,25 +36,29 @@ async function handleSearch () {
         {{ category }} Category
       </span>
     </div>
-  
+
     <UContainer>
       <div class="flex-col space-y-4">
         <input
-          type="search"
           v-model="search"
+          type="search"
           placeholder="Search product"
           class="py-4 w-full text-lg md:text-2xl border-b border-black focus:outline-none"
           @input="handleSearch"
         >
 
         <div class="min-h-96" :class="{ 'flex items-center justify-center': searching || !products?.length }">
-          <p v-if="searching">Searching product ...</p>
+          <p v-if="searching">
+            Searching product ...
+          </p>
 
           <div v-else :class="{ 'grid grid-cols-2 md:grid-cols-4 gap-8': products?.length }">
-            <p v-if="!products?.length">No products found</p>        
+            <p v-if="!products?.length">
+              No products found
+            </p>
             <ProductList
-              v-else
               v-for="product in products"
+              v-else
               :key="product.id"
               :product="product"
             />

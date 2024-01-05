@@ -12,7 +12,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   modules: [
     '@nuxt/ui',
-    '@nuxtjs/google-fonts'
+    '@nuxtjs/google-fonts',
+    '@nuxtjs/eslint-module'
   ],
   colorMode: { preference: 'light' },
   googleFonts: {

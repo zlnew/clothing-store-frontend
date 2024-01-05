@@ -3,7 +3,7 @@ export default defineNuxtPlugin(async () => {
   const items = useCartItems()
   const { refresh } = useShoppingCart()
 
-  if (!user.value) return
-  if (!!items.value) return
+  if (!user.value) { return }
+  if (items.value) { return }
   await refresh()
 })

@@ -27,5 +27,5 @@ const { instance, state } = useModal()
 
       <Component :is="state.component" :="state.componentProps" />
     </UCard>
-  </UModal>  
+  </UModal>
 </template>

@@ -2,7 +2,7 @@
 const categoryHeroes = [
   { name: 'Men', src: '/img/category/men.jpg', to: '/shop/men' },
   { name: 'All', src: '/img/category/all.jpg', to: '/shop/all' },
-  { name: 'Women', src: '/img/category/women.jpg', to: '/shop/women' },
+  { name: 'Women', src: '/img/category/women.jpg', to: '/shop/women' }
 ]
 </script>
 
@@ -29,7 +29,7 @@ const categoryHeroes = [
             {{ name }}
           </div>
         </div>
-      </NuxtLink >
+      </NuxtLink>
     </div>
   </UContainer>
 </template>

@@ -36,12 +36,14 @@ const { submit: save, processing: saving, validationMessage } = useSubmit(
         <UIcon name="i-mdi-account-details" class="text-2xl" />
         <div>
           <h2>Customer Details</h2>
-          <p class="text-gray-600">Please fill out this form, so you will be able to finish your checkout</p>
+          <p class="text-gray-600">
+            Please fill out this form, so you will be able to finish your checkout
+          </p>
         </div>
       </div>
 
       <ErrorNotification :message="validationMessage" @close="validationMessage = null" />
-  
+
       <div class="space-y-2">
         <UFormGroup label="Phone Number" name="phone_number" required>
           <UInput
@@ -50,7 +52,7 @@ const { submit: save, processing: saving, validationMessage } = useSubmit(
             size="xl"
           />
         </UFormGroup>
-  
+
         <UFormGroup label="Address" name="address" required>
           <UTextarea
             v-model="state.address"
@@ -58,7 +60,7 @@ const { submit: save, processing: saving, validationMessage } = useSubmit(
             size="xl"
           />
         </UFormGroup>
-  
+
         <UFormGroup label="Postal Code" name="postal_code" required>
           <UInput
             v-model="state.postal_code"
@@ -67,7 +69,7 @@ const { submit: save, processing: saving, validationMessage } = useSubmit(
           />
         </UFormGroup>
       </div>
-  
+
       <div class="text-right">
         <UButton
           type="submit"

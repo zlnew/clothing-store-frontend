@@ -28,7 +28,7 @@ const { submit: update, processing: updating, validationMessage } = useSubmit(
 
 const { submit: verifyEmail, processing: sendingVerification } = useSubmit(
   () => resendEmailVerification(), {
-    onSuccess: (result) => toast.add({ title: result.status, color: 'green', timeout: 0 }),
+    onSuccess: result => toast.add({ title: result.status, color: 'green', timeout: 0 }),
     onError: () => toast.add({
       title: 'An error occured when sending verification email',
       color: 'red',
@@ -45,12 +45,14 @@ const { submit: verifyEmail, processing: sendingVerification } = useSubmit(
         <UIcon name="i-mdi-user" class="text-2xl" />
         <div>
           <h2>Account</h2>
-          <p class="text-gray-600">You can change your name, email, and password</p>
+          <p class="text-gray-600">
+            You can change your name, email, and password
+          </p>
         </div>
       </div>
 
       <ErrorNotification :message="validationMessage" @close="validationMessage = null" />
-  
+
       <div class="space-y-2">
         <UFormGroup label="Name" name="name" required>
           <UInput
@@ -59,7 +61,7 @@ const { submit: verifyEmail, processing: sendingVerification } = useSubmit(
             size="xl"
           />
         </UFormGroup>
-  
+
         <UFormGroup label="Email Address" name="email" :hint="!user?.email_verified_at ? 'Please verify your email address' : ''" required>
           <div class="flex gap-1">
             <UInput
@@ -81,7 +83,7 @@ const { submit: verifyEmail, processing: sendingVerification } = useSubmit(
           </div>
         </UFormGroup>
       </div>
-  
+
       <div class="flex items-center justify-between gap-2">
         <UButton
           to="/my-profile/change-password"

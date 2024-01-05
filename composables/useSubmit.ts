@@ -5,7 +5,7 @@ export type UseSubmitOptions = {
   onError?: (result: any) => any
 }
 
-export function useSubmit<T>(
+export function useSubmit<T> (
   fetchable: () => Promise<T>,
   options: UseSubmitOptions = {}
 ) {
@@ -34,7 +34,7 @@ export function useSubmit<T>(
       validationErrors.value = e.data?.errors ?? {}
       validationMessage.value = e.data?.message ?? null
 
-      if (e.response?.status !== 422) throw e
+      if (e.response?.status !== 422) { throw e }
     } finally {
       processing.value = false
     }

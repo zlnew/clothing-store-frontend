@@ -30,7 +30,7 @@ const state = reactive<Schema>({
 
 const { submit: change, processing: changing, validationMessage } = useSubmit(
   () => changePassword(state), {
-    onSuccess: (result) => toast.add({ title: result.status, color: 'green' })
+    onSuccess: result => toast.add({ title: result.status, color: 'green' })
   }
 )
 </script>
@@ -50,7 +50,7 @@ const { submit: change, processing: changing, validationMessage } = useSubmit(
               size="xl"
             />
           </UFormGroup>
-  
+
           <UFormGroup label="New Password" name="password" required>
             <UInput
               v-model="state.password"
@@ -59,7 +59,7 @@ const { submit: change, processing: changing, validationMessage } = useSubmit(
               size="xl"
             />
           </UFormGroup>
-  
+
           <UFormGroup label="Confirm New Password" name="password_confirmation" required>
             <UInput
               v-model="state.password_confirmation"
@@ -69,7 +69,7 @@ const { submit: change, processing: changing, validationMessage } = useSubmit(
             />
           </UFormGroup>
         </div>
-  
+
         <div class="text-right">
           <UButton
             type="submit"

@@ -3,7 +3,9 @@
     <UContainer class="grid grid-cols-3 items-center gap-4">
       <div class="col-span-2 md:col-span-1 p-2 w-fit border border-black bg-yellow-300">
         <NuxtLink to="/">
-          <h1 class="text-2xl font-normal">Zee Apparel</h1>
+          <h1 class="text-2xl font-normal">
+            Zee Apparel
+          </h1>
         </NuxtLink>
       </div>
 
