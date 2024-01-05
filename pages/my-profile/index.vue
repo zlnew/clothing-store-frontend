@@ -6,6 +6,15 @@ const breadcrumbLinks = [
   { label: 'Home', to: '/' },
   { label: 'My Profile' }
 ]
+
+const route = useRoute()
+const toast = useToast()
+
+onMounted(() => {
+  if (typeof route.query.verified === 'string' && route.query.verified) {
+    toast.add({ title: 'Your email has been verified', color: 'green' })
+  }
+})
 </script>
 
 <template>

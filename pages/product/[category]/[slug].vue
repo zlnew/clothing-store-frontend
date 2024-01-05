@@ -30,6 +30,7 @@ const accordionItems = [
 const { storageBaseUrl } = useRuntimeConfig().public
 const route = useRoute()
 const cart = useShoppingCart()
+const { user } = useAuth()
 const { show } = useProduct()
 
 const selectedSize = ref<string>()
@@ -39,7 +40,7 @@ const { data: product } = useAsyncData(
   'product', () => handleGetProduct()
 )
 
-const { submit: addToCart } = useSubmit(
+const { submit: addToCart, validationMessage: addToCartValidationMessage } = useSubmit(
   () => handleAddToCart()
 )
 
@@ -89,6 +90,10 @@ useSeoMeta({ title: () => product.value?.name || 'Product Not Found' })
     </div>
 
     <div v-else class="grid md:grid-cols-2 items-start gap-8">
+      <div v-if="addToCartValidationMessage" class="col-span-2">
+        <ErrorNotification :message="addToCartValidationMessage" @close="addToCartValidationMessage = null" />
+      </div>
+
       <div class="flex justify-center">
         <img
           :src="`${storageBaseUrl + product.image}`"
@@ -153,6 +158,17 @@ useSeoMeta({ title: () => product.value?.name || 'Product Not Found' })
           </div>
           <div class="col-span-6">
             <UButton
+              v-if="!user"
+              block
+              title="You must login first to add items to the cart"
+              label="ADD TO CART"
+              color="black"
+              size="xl"
+              disabled
+            />
+
+            <UButton
+              v-else
               block
               label="ADD TO CART"
               color="black"

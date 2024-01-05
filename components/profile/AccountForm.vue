@@ -28,7 +28,11 @@ const { submit: update, processing: updating, validationMessage } = useSubmit(
 
 const { submit: verifyEmail, processing: sendingVerification } = useSubmit(
   () => resendEmailVerification(), {
-    onSuccess: result => toast.add({ title: result.status, color: 'green', timeout: 0 }),
+    onSuccess: (result) => {
+      if (result.status === 'verification-link-sent') {
+        toast.add({ title: 'Verification Link Sent. Check your email', color: 'green', timeout: 0 })
+      }
+    },
     onError: () => toast.add({
       title: 'An error occured when sending verification email',
       color: 'red',
@@ -79,6 +83,12 @@ const { submit: verifyEmail, processing: sendingVerification } = useSubmit(
               size="xl"
               :loading="sendingVerification"
               @click="verifyEmail"
+            />
+            <UButton
+              v-else
+              label="Verified"
+              size="xl"
+              disabled
             />
           </div>
         </UFormGroup>
